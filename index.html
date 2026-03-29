@@ -3,104 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOZP & PO Portál | Ing. Ondřej Toman</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>BOZP & PO | Ing. Ondřej Toman</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e293b;
+            --primary: #0f172a;
             --accent: #c9a44e;
+            --accent-hover: #b38f3d;
             --bg: #f8fafc;
             --card: #ffffff;
-            --text: #0f172a;
+            --text: #1e293b;
             --text-light: #64748b;
             --danger: #ef4444;
             --success: #10b981;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --radius: 12px;
+            --border: #e2e8f0;
+            --radius: 14px;
+            --shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
 
-        /* Login Screen - Modern Glassmorphism */
+        /* Login Screen */
         #login-screen { 
             min-height: 100vh; display: flex; align-items: center; justify-content: center; 
-            background: radial-gradient(circle at top left, #1e293b, #0f172a);
+            background: radial-gradient(circle at center, #1e293b, #0f172a);
         }
         .login-box { 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            border-radius: 24px; padding: 3rem; width: 100%; max-width: 420px; 
+            background: white; border-radius: 28px; padding: 3.5rem; width: 100%; max-width: 420px; 
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center;
         }
 
         /* Layout */
-        #app { display: none; min-height: 100vh; display: flex; flex-direction: column; }
+        #app { display: none; flex-direction: column; min-height: 100vh; }
         .navbar { 
-            background: var(--primary); color: white; padding: 0.75rem 2rem;
+            background: var(--primary); color: white; padding: 0.8rem 2.5rem;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100;
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .container { display: flex; flex: 1; max-width: 1600px; margin: 0 auto; width: 100%; }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { 
+            width: 35px; height: 35px; background: var(--accent); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary);
+        }
 
-        /* Sidebar Navigation */
+        .container { display: flex; flex: 1; width: 100%; }
+
+        /* Sidebar */
         .sidebar { 
-            width: 260px; background: white; border-right: 1px solid #e2e8f0; 
-            padding: 2rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;
+            width: 280px; background: white; border-right: 1px solid var(--border); 
+            padding: 2rem 1.25rem; display: flex; flex-direction: column; gap: 0.5rem;
         }
         .nav-link {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            display: flex; align-items: center; gap: 12px; padding: 14px 18px;
             text-decoration: none; color: var(--text-light); border-radius: var(--radius);
-            font-weight: 500; transition: all 0.2s; cursor: pointer;
+            font-weight: 600; transition: all 0.2s; cursor: pointer; font-size: 0.95rem;
         }
         .nav-link:hover { background: #f1f5f9; color: var(--primary); }
-        .nav-link.active { background: var(--primary); color: white; }
+        .nav-link.active { background: var(--primary); color: white; box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.2); }
 
-        /* Main Content Area */
-        .content { flex: 1; padding: 2rem; background: var(--bg); }
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        h1 { font-weight: 700; font-size: 1.875rem; color: var(--primary); }
+        /* Content */
+        .content { flex: 1; padding: 3rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .page-header { margin-bottom: 2.5rem; }
+        h1 { font-weight: 800; font-size: 2.25rem; letter-spacing: -0.04em; color: var(--primary); }
 
-        /* Cards & Tables */
-        .card { 
-            background: var(--card); border-radius: var(--radius); 
-            box-shadow: var(--shadow); border: 1px solid #e2e8f0; overflow: hidden;
+        /* Admin Badge */
+        .admin-badge { 
+            background: var(--accent); color: var(--primary); padding: 4px 10px; 
+            border-radius: 6px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+            margin-left: 10px; vertical-align: middle;
         }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { padding: 1.5rem; background: white; border-radius: var(--radius); border-left: 4px solid var(--accent); }
-        
+
+        /* Search Bar */
+        .search-container { margin-bottom: 1.5rem; position: relative; max-width: 450px; }
+        .search-input {
+            width: 100%; padding: 14px 16px 14px 44px; border-radius: 12px;
+            border: 1px solid var(--border); outline: none; transition: 0.2s; font-family: inherit;
+        }
+        .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(201, 164, 78, 0.1); }
+        .search-icon { position: absolute; left: 16px; top: 16px; opacity: 0.4; }
+
+        /* Tables & Cards */
+        .card { background: white; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: #f8fafc; padding: 1rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--text-light); letter-spacing: 0.05em; }
-        td { padding: 1rem; border-top: 1px solid #f1f5f9; vertical-align: middle; }
-
-        /* Modern UI Components */
-        .btn { 
-            display: inline-flex; align-items: center; justify-content: center;
-            padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;
-            transition: all 0.2s; border: none; font-size: 0.9rem;
-        }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2); }
-        .btn-outline { border: 1px solid #e2e8f0; background: white; color: var(--text); }
+        th { background: #f8fafc; padding: 1.25rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-light); border-bottom: 1px solid var(--border); }
+        td { padding: 1.25rem 1.5rem; border-top: 1px solid #f1f5f9; font-size: 0.95rem; }
         
-        .badge { padding: 4px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 600; }
-        .badge-red { background: #fee2e2; color: #991b1b; }
-        .badge-green { background: #dcfce7; color: #166534; }
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .stat-card { padding: 1.75rem; background: white; border-radius: 20px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        .stat-card h3 { font-size: 2.25rem; font-weight: 800; margin-bottom: 4px; }
+        .stat-card::after { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--accent); }
 
-        /* Modal */
-        .modal-backdrop { 
-            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); 
-            backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; 
-        }
-        .modal { background: white; border-radius: 20px; width: 100%; max-width: 550px; padding: 2.5rem; position: relative; }
-
-        .input-group { margin-bottom: 1.25rem; }
-        .input-group label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600; }
-        .input-group input { 
-            width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; 
-            outline: none; transition: border-color 0.2s;
-        }
-        .input-group input:focus { border-color: var(--accent); ring: 2px solid var(--accent); }
+        /* Buttons */
+        .btn { padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; border: none; font-size: 0.9rem; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-accent { background: var(--accent); color: var(--primary); }
+        .btn-danger { background: #fee2e2; color: var(--danger); }
 
         .hidden { display: none !important; }
     </style>
@@ -109,40 +109,58 @@
 
 <div id="login-screen">
     <div class="login-box">
-        <h2 style="margin-bottom: 0.5rem; font-weight: 800;">BOZP Portál</h2>
-        <p style="color: var(--text-light); margin-bottom: 2rem;">Vítejte zpět, přihlaste se prosím.</p>
-        <div class="input-group"><label>E-mail</label><input type="email" id="login-email" placeholder="jmeno@firma.cz"></div>
-        <div class="input-group"><label>Heslo</label><input type="password" id="login-password"></div>
-        <button class="btn btn-primary" style="width: 100%; padding: 14px;" onclick="doLogin()">Vstoupit do portálu</button>
-        <p id="login-msg" style="margin-top: 1rem; color: var(--danger); font-size: 0.875rem;"></p>
-        <button class="btn btn-outline" style="width: 100%; margin-top: 1rem; border: none;" onclick="handleForgotPassword()">Zapomenuté heslo?</button>
+        <div class="logo-icon" style="margin: 0 auto 1.5rem; width: 60px; height: 60px; font-size: 1.5rem;">OT</div>
+        <h2 style="font-weight: 800; margin-bottom: 0.5rem;">Klientský Portál</h2>
+        <p style="color: var(--text-light); margin-bottom: 2.5rem; font-size: 0.95rem;">Ing. Ondřej Toman<br>BOZP & PO Specialista</p>
+        <div class="input-group" style="text-align:left; margin-bottom:1rem;">
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-light)">E-MAIL</label>
+            <input type="email" id="login-email" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);">
+        </div>
+        <div class="input-group" style="text-align:left; margin-bottom:1.5rem;">
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-light)">HESLO</label>
+            <input type="password" id="login-password" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);">
+        </div>
+        <button class="btn btn-primary" style="width: 100%; padding: 16px;" onclick="doLogin()">Přihlásit se k účtu</button>
+        <p id="login-msg" style="margin-top: 1rem; color: var(--danger); font-size: 0.85rem;"></p>
     </div>
 </div>
 
 <div id="app">
     <header class="navbar">
-        <div style="font-weight: 700; font-size: 1.2rem; letter-spacing: -0.5px;">BOZP<span style="color:var(--accent)">PORTÁL</span></div>
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <span id="user-display" style="font-size: 0.9rem; opacity: 0.8;">Administrátor</span>
-            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="logout()">Odhlásit</button>
+        <div class="logo-area">
+            <div class="logo-icon">OT</div>
+            <div style="line-height: 1.1;">
+                <div style="font-weight: 800; font-size: 1rem; letter-spacing: -0.02em;">BOZP<span style="color:var(--accent)">PORTÁL</span></div>
+                <div style="font-size: 0.65rem; opacity: 0.7; font-weight: 600;">Ing. Ondřej Toman</div>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div id="user-info" style="display:flex; align-items:center;">
+                <span id="user-display" style="font-size: 0.85rem; font-weight: 600;">Ondřej Toman</span>
+                <span id="admin-indicator" class="admin-badge hidden">Admin</span>
+            </div>
+            <button class="btn" style="background: rgba(255,255,255,0.1); color: white; padding: 8px 16px; font-size: 0.8rem;" onclick="logout()">Odhlásit</button>
         </div>
     </header>
 
     <div class="container">
         <aside class="sidebar">
-            <div class="nav-link active" id="nav-dashboard" onclick="showPage('dashboard')"><span>📊</span> Dashboard</div>
-            <div class="nav-link" id="nav-klienti" onclick="showPage('klienti')"><span>🏢</span> Seznam klientů</div>
-            <div class="nav-link" id="nav-terminy" onclick="showPage('terminy')"><span>📅</span> Všechny termíny</div>
+            <div class="nav-link active" id="nav-dashboard" onclick="showPage('dashboard')">📊 Přehled termínů</div>
+            <div class="nav-link" id="nav-klienti" onclick="showPage('klienti')">🏢 Seznam klientů</div>
+            <div class="nav-link" id="nav-terminy" onclick="showPage('terminy')">📅 Všechny kontroly</div>
         </aside>
 
         <main class="content">
             <div id="page-dashboard">
-                <div class="page-header"><h1>Přehled rizik</h1></div>
+                <div class="page-header">
+                    <h1 id="welcome-msg">Vítejte, pane inženýre</h1>
+                    <p style="color:var(--text-light)">Zde je přehled nejbližších kontrol u Vašich klientů.</p>
+                </div>
                 <div class="stats-grid" id="stats-grid"></div>
                 <div class="card">
-                    <div style="padding: 1.5rem; border-bottom: 1px solid #f1f5f9;"><h3 style="font-size: 1rem;">Kritické termíny (30 dní)</h3></div>
+                    <div style="padding: 1.5rem; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 1.1rem;">Kritické termíny (exspirace do 30 dnů)</div>
                     <table>
-                        <thead><tr><th>Klient</th><th>Úkon</th><th>Datum</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Firma / Klient</th><th>Typ úkonu</th><th>Datum</th><th>Status</th></tr></thead>
                         <tbody id="dashboard-tbody"></tbody>
                     </table>
                 </div>
@@ -150,22 +168,28 @@
 
             <div id="page-klienti" class="hidden">
                 <div class="page-header">
-                    <h1>Seznam klientů</h1>
-                    <button class="btn btn-primary" id="admin-add-btn" onclick="openModal()">+ Nový klient</button>
+                    <h1>Správa klientů</h1>
+                    <button class="btn btn-accent" id="admin-add-btn" onclick="openModal()">+ Přidat novou firmu</button>
                 </div>
+                
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="search-input" placeholder="Hledat firmu podle názvu, IČO nebo e-mailu..." onkeyup="filterClients()">
+                </div>
+
                 <div class="card">
                     <table>
-                        <thead><tr><th>Firma</th><th>IČO</th><th>Kontakt</th><th>Adresa</th><th class="admin-only">Akce</th></tr></thead>
+                        <thead><tr><th>Firma / Adresa</th><th>IČO</th><th>Kontakt / E-mail</th><th class="admin-only">Akce</th></tr></thead>
                         <tbody id="klienti-tbody"></tbody>
                     </table>
                 </div>
             </div>
 
             <div id="page-terminy" class="hidden">
-                <div class="page-header"><h1>Všechny termíny</h1></div>
+                <div class="page-header"><h1>Všechny kontroly</h1></div>
                 <div class="card">
                     <table>
-                        <thead><tr><th>Klient</th><th>Typ kontroly</th><th>Naposledy</th><th>Příště</th><th>Zbývá</th></tr></thead>
+                        <thead><tr><th>Klient</th><th>Typ úkonu</th><th>Naposledy</th><th>Příští termín</th><th>Zbývá dní</th></tr></thead>
                         <tbody id="terminy-tbody"></tbody>
                     </table>
                 </div>
@@ -176,19 +200,19 @@
 
 <div class="modal-backdrop" id="modal">
     <div class="modal">
-        <h2 style="margin-bottom: 1.5rem;">Přidat nového klienta</h2>
+        <h2 style="margin-bottom: 0.5rem; font-weight: 800;">Nový klient</h2>
+        <p style="color:var(--text-light); margin-bottom: 2rem; font-size: 0.9rem;">Vyplňte základní údaje o firmě.</p>
         <form onsubmit="saveNewClient(event)">
-            <div class="input-group"><label>Název firmy</label><input type="text" id="f-name" required></div>
+            <div class="input-group"><label>NÁZEV FIRMY</label><input type="text" id="f-name" required></div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="input-group"><label>IČO</label><input type="text" id="f-ico"></div>
-                <div class="input-group"><label>Telefon</label><input type="text" id="f-phone"></div>
+                <div class="input-group"><label>TELEFON</label><input type="text" id="f-phone"></div>
             </div>
-            <div class="input-group"><label>E-mail (přihlašovací)</label><input type="email" id="f-email" required></div>
-            <div class="input-group"><label>Adresa sídla</label><input type="text" id="f-address"></div>
-            
-            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <div class="input-group"><label>E-MAIL (přihlašovací jméno)</label><input type="email" id="f-email" required></div>
+            <div class="input-group"><label>ADRESA SÍDLA</label><input type="text" id="f-address"></div>
+            <div style="display: flex; gap: 1rem; margin-top: 2.5rem;">
                 <button type="submit" class="btn btn-primary" style="flex: 2;" id="save-btn">Uložit klienta</button>
-                <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal()">Zrušit</button>
+                <button type="button" class="btn" style="flex: 1; background: #f1f5f9;" onclick="closeModal()">Zavřít</button>
             </div>
         </form>
     </div>
@@ -198,7 +222,6 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdzr3oNh4w6kbKVtLNSgThYYB35Uk6Ycf76lpddjVxGsSDiqdmV7__Md-Tf3E1Qx4O/exec";
     let CLIENTS = [], TASKS = [], USER_ROLE = "client";
 
-    // --- INIT & AUTH ---
     window.onload = () => {
         const saved = localStorage.getItem('bozp_session');
         if (saved) {
@@ -214,7 +237,7 @@
         const pass = document.getElementById('login-password').value;
         const msg = document.getElementById('login-msg');
         if(!email) return;
-        msg.innerText = "Autorizace...";
+        msg.innerText = "Ověřování v systému...";
 
         try {
             const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "login", email, password: pass }) }).then(r => r.json());
@@ -224,23 +247,40 @@
                 setupUI();
                 renderAll();
             } else msg.innerText = res.msg;
-        } catch(e) { msg.innerText = "Chyba serveru."; }
+        } catch(e) { msg.innerText = "Chyba připojení."; }
     }
 
     function setupUI() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app').style.display = 'flex';
-        if (USER_ROLE === "client") {
+        
+        if (USER_ROLE === "admin") {
+            document.getElementById('admin-indicator').classList.remove('hidden');
+            document.getElementById('user-display').innerText = "Ing. Ondřej Toman";
+            document.getElementById('welcome-msg').innerText = "Dobrý den, pane inženýre";
+        } else {
             document.querySelectorAll('.admin-only, #admin-add-btn, #nav-klienti').forEach(el => el.classList.add('hidden'));
-            document.getElementById('user-display').innerText = "Klient: " + (CLIENTS[0]?.Firma || "");
+            const clientName = CLIENTS[0]?.Firma || "Klient";
+            document.getElementById('user-display').innerText = clientName;
+            document.getElementById('welcome-msg').innerText = "Vítejte, " + clientName;
+            document.getElementById('admin-indicator').classList.add('hidden');
         }
     }
 
-    // --- RENDERING ---
     function renderAll() {
         renderDashboard();
-        renderKlienti();
+        renderKlienti(CLIENTS);
         renderTerminy();
+    }
+
+    function filterClients() {
+        const val = document.getElementById('search-input').value.toLowerCase();
+        const filtered = CLIENTS.filter(c => 
+            c.Firma.toLowerCase().includes(val) || 
+            (c.ICI && c.ICI.toString().includes(val)) || 
+            c.email.toLowerCase().includes(val)
+        );
+        renderKlienti(filtered);
     }
 
     function renderDashboard() {
@@ -249,33 +289,34 @@
         let expired = 0;
 
         TASKS.forEach(t => {
-            const nextDate = addMonths(t.posledni, t.perioda);
-            const diff = daysDiff(nextDate);
+            const next = addMonths(t.posledni, t.perioda);
+            const diff = daysDiff(next);
             if (diff < 30) {
                 if (diff < 0) expired++;
                 tbody.innerHTML += `<tr>
-                    <td><strong>${t.Firma}</strong></td>
+                    <td><div style="font-weight:700">${t.Firma}</div></td>
                     <td>${t.typ}</td>
-                    <td>${nextDate.toLocaleDateString('cs-CZ')}</td>
-                    <td><span class="badge ${diff < 0 ? 'badge-red' : 'badge-green'}">${diff < 0 ? 'Prošlé' : 'Blíží se'}</span></td>
+                    <td>${next.toLocaleDateString('cs-CZ')}</td>
+                    <td><span class="badge ${diff < 0 ? 'badge-red' : 'badge-green'}">${diff < 0 ? 'Expirováno' : 'Blíží se'}</span></td>
                 </tr>`;
             }
         });
 
         document.getElementById('stats-grid').innerHTML = `
-            <div class="stat-card"><h3>${CLIENTS.length}</h3><p style="color:var(--text-light); font-size:0.8rem">Aktivní firmy</p></div>
-            <div class="stat-card" style="border-left-color:var(--danger)"><h3>${expired}</h3><p style="color:var(--text-light); font-size:0.8rem">Expirované revize</p></div>
+            <div class="stat-card"><h3>${CLIENTS.length}</h3><p style="color:var(--text-light); font-weight:600">Celkem klientů</p></div>
+            <div class="stat-card" style="border-left: 6px solid ${expired > 0 ? 'var(--danger)' : 'var(--success)'}">
+                <h3>${expired}</h3><p style="color:var(--text-light); font-weight:600">Expirované revize</p>
+            </div>
         `;
     }
 
-    function renderKlienti() {
-        document.getElementById('klienti-tbody').innerHTML = CLIENTS.map(c => `
+    function renderKlienti(data) {
+        document.getElementById('klienti-tbody').innerHTML = data.map(c => `
             <tr>
-                <td><div style="font-weight:600">${c.Firma}</div><div style="font-size:0.75rem; color:var(--text-light)">ID: ${c.Id}</div></td>
-                <td>${c.ICI || c.ico || '-'}</td>
+                <td><div style="font-weight:700">${c.Firma}</div><div style="font-size:0.75rem; color:var(--text-light)">${c.Adresa || ''}</div></td>
+                <td><span style="font-family: monospace; font-weight:600">${c.ICI || c.ico || '-'}</span></td>
                 <td><div>${c.email}</div><div style="font-size:0.8rem; color:var(--text-light)">${c.Telefon || ''}</div></td>
-                <td>${c.Adresa || '-'}</td>
-                <td class="admin-only"><button class="btn btn-outline" style="color:var(--danger); padding:4px 8px" onclick="deleteClient(${c.Id})">Smazat</button></td>
+                <td class="admin-only"><button class="btn btn-danger" style="padding: 6px 12px; font-size:0.75rem;" onclick="deleteClient(${c.Id})">Smazat</button></td>
             </tr>`).join('');
     }
 
@@ -284,7 +325,7 @@
             const next = addMonths(t.posledni, t.perioda);
             const diff = next ? daysDiff(next) : '-';
             return `<tr>
-                <td>${t.Firma}</td>
+                <td><strong>${t.Firma}</strong></td>
                 <td>${t.typ}</td>
                 <td>${t.posledni ? new Date(t.posledni).toLocaleDateString('cs-CZ') : '-'}</td>
                 <td>${next ? next.toLocaleDateString('cs-CZ') : '-'}</td>
@@ -293,19 +334,10 @@
         }).join('');
     }
 
-    // --- LOGIC ---
-    function showPage(id) {
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.getElementById('nav-' + id).classList.add('active');
-        ['dashboard', 'klienti', 'terminy'].forEach(p => document.getElementById('page-' + p).classList.add('hidden'));
-        document.getElementById('page-' + id).classList.remove('hidden');
-    }
-
     async function saveNewClient(e) {
         e.preventDefault();
         const btn = document.getElementById('save-btn');
         btn.innerText = "Ukládám..."; btn.disabled = true;
-        
         const payload = {
             action: "addClient",
             name: document.getElementById('f-name').value,
@@ -314,15 +346,22 @@
             phone: document.getElementById('f-phone').value,
             address: document.getElementById('f-address').value
         };
-
         await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-        alert("Firma přidána!"); location.reload();
+        alert("Klient byl úspěšně přidán do databáze."); 
+        location.reload();
     }
 
     async function deleteClient(id) {
-        if (!confirm("Smazat klienta a všechna data?")) return;
+        if (!confirm("Opravdu smazat klienta? Tato akce je nevratná.")) return;
         await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "deleteClient", id: id }) });
         location.reload();
+    }
+
+    function showPage(id) {
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.getElementById('nav-' + id).classList.add('active');
+        ['dashboard', 'klienti', 'terminy'].forEach(p => document.getElementById('page-' + p).classList.add('hidden'));
+        document.getElementById('page-' + id).classList.remove('hidden');
     }
 
     function addMonths(d, m) { if(!d) return null; const r = new Date(d); r.setMonth(r.getMonth() + parseInt(m)); return r; }
@@ -330,7 +369,6 @@
     function logout() { localStorage.removeItem('bozp_session'); location.reload(); }
     function openModal() { document.getElementById('modal').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    async function handleForgotPassword() { alert("Funkce odeslání e-mailu je aktivní. Pokud máte v Apps Scriptu nastaven ADMIN_EMAIL, kód dorazí do 2 minut."); }
 </script>
 </body>
 </html>
