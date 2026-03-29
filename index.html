@@ -96,7 +96,7 @@
 <div class="modal-backdrop" id="modal-task"><div class="modal"><h2 id="task-modal-title">Úkon</h2><br><input type="hidden" id="t-old-type"><input type="text" id="t-type" placeholder="Název úkonu"><label style="font-size:0.8rem">Datum poslední revize:</label><input type="date" id="t-date"><label style="font-size:0.8rem">Perioda (v měsících):</label><input type="number" id="t-period"><button class="btn btn-primary" onclick="saveTask()">Uložit data</button><button class="btn" onclick="closeModal('modal-task')" style="margin-top:10px;">Zavřít</button></div></div>
 
 <script>
-    const SCRIPT_URL = "TVOJE_URL"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdzr3oNh4w6kbKVtLNSgThYYB35Uk6Ycf76lpddjVxGsSDiqdmV7__Md-Tf3E1Qx4O/exec"; 
     let CLIENTS = [], TASKS = [], USER_ROLE = "client", CURR_CO = "";
 
     async function api(payload) {
