@@ -1,8 +1,36 @@
 {
   "clients": [
-    { "id": "abc-stavby", "name": "ABC Stavby s.r.o.", "email": "info@abc.cz", "ico": "123456" }
+    {
+      "id": "c-171123456789",
+      "name": "ABC Stavby s.r.o.",
+      "ico": "12345678",
+      "obor": "Stavebnictví",
+      "email": "info@abcstavby.cz"
+    },
+    {
+      "id": "c-171198765432",
+      "name": "Kovárna Brno s.r.o.",
+      "ico": "87654321",
+      "obor": "Kovoobrábění",
+      "email": "horackova@kovarna.cz"
+    }
   ],
   "tasks": [
-    { "clientId": "abc-stavby", "typ": "Školení BOZP", "posledni": "2024-01-01", "perioda": 12 }
+    {
+      "clientId": "c-171123456789",
+      "typ": "Školení BOZP",
+      "kategorie": "skoleni",
+      "posledni": "2024-01-15",
+      "perioda": 12,
+      "odpovedny": "ABC Stavby s.r.o."
+    },
+    {
+      "clientId": "c-171123456789",
+      "typ": "Revize elektro",
+      "kategorie": "revize",
+      "posledni": "2023-06-10",
+      "perioda": 24,
+      "odpovedny": "ABC Stavby s.r.o."
+    }
   ]
 }
