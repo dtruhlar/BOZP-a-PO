@@ -82,7 +82,7 @@
                 </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>ID</th><th>Firma</th><th>IČO</th><th>E-mail</th><th class="admin-only" id="admin-th">Akce</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Firma / Adresa</th><th>IČO</th><th>E-mail / Tel.</th><th class="admin-only" id="admin-th">Akce</th></tr></thead>
                         <tbody id="klienti-tbody"></tbody>
                     </table>
                 </div>
@@ -107,6 +107,8 @@
             <div class="field-group"><label>Název firmy</label><input type="text" id="f-name" required></div>
             <div class="field-group"><label>IČO</label><input type="text" id="f-ico"></div>
             <div class="field-group"><label>E-mail pro notifikace</label><input type="email" id="f-email" required></div>
+            <div class="field-group"><label>Telefon</label><input type="text" id="f-phone"></div>
+            <div class="field-group"><label>Adresa</label><input type="text" id="f-address"></div>
             <hr><br>
             <div class="field-group"><label>Školení BOZP (poslední datum)</label><input type="date" class="task-init" data-name="Školení BOZP" data-period="12"></div>
             <div class="field-group"><label>Revize elektro (poslední datum)</label><input type="date" class="task-init" data-name="Revize elektro" data-period="24"></div>
@@ -130,7 +132,6 @@
         const pass = document.getElementById('login-password').value;
         const msg = document.getElementById('login-msg');
         if(!email) { alert("Zadejte email"); return; }
-        
         msg.innerText = "Ověřování...";
 
         try {
@@ -142,11 +143,11 @@
             if (res.status === "needs_reg") {
                 const newPass = prompt("První přihlášení. Zvolte si své heslo:");
                 if (newPass) {
-                    const regRes = await fetch(SCRIPT_URL, {
+                    await fetch(SCRIPT_URL, {
                         method: "POST",
                         body: JSON.stringify({ action: "login", email: email, newPassword: newPass })
                     }).then(r => r.json());
-                    if(regRes.status === "success_reg") alert("Heslo nastaveno. Přihlaste se.");
+                    alert("Heslo nastaveno. Přihlaste se.");
                 }
                 location.reload(); return;
             }
@@ -162,7 +163,6 @@
                     document.getElementById('admin-th').style.display = "none";
                     document.getElementById('user-display').innerText = "Klientský portál — " + (CLIENTS[0]?.name || "");
                 }
-
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app').style.display = 'block';
                 renderAll();
@@ -208,7 +208,14 @@
     }
 
     function renderKlienti() {
-        document.getElementById('klienti-tbody').innerHTML = CLIENTS.map(c => `<tr><td>${c.clientId}</td><td><strong>${c.name}</strong></td><td>${c.ico || '-'}</td><td>${c.email}</td>${USER_ROLE === 'admin' ? `<td><button class="btn btn-danger" onclick="deleteClient(${c.clientId})">Smazat</button></td>` : ''}</tr>`).join('');
+        document.getElementById('klienti-tbody').innerHTML = CLIENTS.map(c => `
+            <tr>
+                <td>${c.clientId}</td>
+                <td><strong>${c.name}</strong><br><small style="color:gray">${c.Adresa || ''}</small></td>
+                <td>${c.ico || '-'}</td>
+                <td>${c.email}<br><small>${c.Telefon || ''}</small></td>
+                ${USER_ROLE === 'admin' ? `<td><button class="btn btn-danger" onclick="deleteClient(${c.clientId})">Smazat</button></td>` : ''}
+            </tr>`).join('');
     }
 
     function renderTerminy() {
@@ -231,37 +238,32 @@
     async function saveNewClient(e) {
         e.preventDefault(); const btn = document.getElementById('save-btn');
         btn.disabled = true; btn.innerText = "Ukládám...";
-        const payload = { action: "addClient", name: document.getElementById('f-name').value, ico: document.getElementById('f-ico').value, email: document.getElementById('f-email').value, tasks: [] };
+        const payload = { 
+            action: "addClient", 
+            name: document.getElementById('f-name').value, 
+            ico: document.getElementById('f-ico').value, 
+            email: document.getElementById('f-email').value,
+            phone: document.getElementById('f-phone').value,
+            address: document.getElementById('f-address').value,
+            tasks: [] 
+        };
         document.querySelectorAll('.task-init').forEach(i => { if (i.value) payload.tasks.push({ typ: i.dataset.name, posledni: i.value, perioda: i.dataset.period }); });
-        await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-        alert("Hotovo!"); location.reload();
+        try {
+            await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+            alert("Firma přidána!"); location.reload();
+        } catch(err) { alert("Chyba při ukládání."); btn.disabled = false; btn.innerText = "Uložit"; }
     }
 
     async function deleteClient(id) {
-    if (!confirm("Opravdu chcete smazat tuto firmu i všechny její termíny?")) return;
-    
-    try {
-        // Odeslání požadavku na smazání
-        const response = await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "deleteClient", id: id })
-        });
-        
-        // MÍSTO REFRESHE STRÁNKY JEN AKTUALIZUJEME DATA V PAMĚTI
-        // Odstraníme klienta ze seznamu
-        CLIENTS = CLIENTS.filter(c => c.clientId != id);
-        // Odstraníme jeho termíny
-        TASKS = TASKS.filter(t => t.clientId != id && t.ID != id);
-        
-        // Překreslíme tabulky na stránce bez odhlášení
-        renderAll();
-        
-        alert("Firma byla smazána.");
-    } catch (e) {
-        alert("Chyba při komunikaci: " + e.message);
+        if (!confirm("Opravdu smazat?")) return;
+        try {
+            await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "deleteClient", id: id }) });
+            CLIENTS = CLIENTS.filter(c => c.clientId != id);
+            TASKS = TASKS.filter(t => t.clientId != id && t.ID != id);
+            renderAll();
+            alert("Smazáno.");
+        } catch (e) { alert("Chyba: " + e.message); }
     }
-}
-}
 </script>
 </body>
 </html>
