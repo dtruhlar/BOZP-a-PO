@@ -3,39 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ing. Ondřej Toman — Správa BOZP & PO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Ing. Ondřej Toman — BOZP & PO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Ponechávám tvoje styly, přidávám jen styl pro delete button */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root { --navy: #1a2744; --navy-light: #243460; --gold: #c9a44e; --gold-light: #e8c97a; --cream: #f7f4ef; --text: #1a1a1a; --text-muted: #5a5a6a; --danger: #c0392b; --warning: #e67e22; --success: #27ae60; --border: rgba(26,39,68,0.12); --radius: 10px; }
+        :root { --navy: #1a2744; --navy-light: #243460; --gold: #c9a44e; --cream: #f7f4ef; --text: #1a1a1a; --text-muted: #5a5a6a; --danger: #c0392b; --success: #27ae60; --border: rgba(26,39,68,0.12); --radius: 10px; }
         body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
-        #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); padding: 2rem; }
-        .login-box { background: #fff; border-radius: 18px; padding: 3rem 2.5rem; width: 100%; max-width: 420px; box-shadow: 0 8px 48px rgba(0,0,0,0.25); text-align: center; }
+        #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); }
+        .login-box { background: #fff; border-radius: 18px; padding: 3rem; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         #app { display: none; }
-        .topbar { background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; height: 58px; position: sticky; top: 0; z-index: 100; }
-        .app-layout { display: flex; min-height: calc(100vh - 58px); }
-        .sidebar { width: 220px; background: #fff; border-right: 1px solid var(--border); padding: 1.5rem 0; }
-        .main { flex: 1; padding: 2rem; overflow-y: auto; }
-        .nav-item { padding: 10px 15px; cursor: pointer; font-size: 14px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+        .topbar { background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 60px; }
+        .app-layout { display: flex; min-height: calc(100vh - 60px); }
+        .sidebar { width: 220px; background: #fff; border-right: 1px solid var(--border); padding-top: 20px; }
+        .nav-item { padding: 12px 20px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
         .nav-item.active { background: var(--navy); color: #fff; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 2rem; }
-        .stat-card { background: #fff; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); }
-        .table-wrap { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        .main { flex: 1; padding: 30px; overflow-y: auto; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #fff; padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); }
+        .table-wrap { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+        th { background: #fafafa; font-weight: 600; }
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .badge-danger { background: #fee2e2; color: var(--danger); }
+        .badge-ok { background: #dcfce7; color: var(--success); }
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal-overlay.open { display: flex; }
-        .modal { background: #fff; padding: 2rem; border-radius: 15px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
-        .field-group { margin-bottom: 1rem; text-align: left; }
-        .field-group label { font-size: 12px; font-weight: bold; display: block; margin-bottom: 5px; }
-        .field-group input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 5px; }
-        .btn-login, .btn-sm { background: var(--navy); color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        .btn-danger { background: var(--danger); font-size: 11px; padding: 5px 10px; }
+        .modal { background: #fff; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; }
+        .field-group { margin-bottom: 15px; text-align: left; }
+        .field-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; }
+        .field-group input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; }
+        .btn-navy { background: var(--navy); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; font-size: 12px; padding: 5px 10px; }
         .hidden { display: none; }
-        .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-        .badge-danger { background: #ffdada; color: var(--danger); }
-        .badge-ok { background: #d4f8e2; color: var(--success); }
     </style>
 </head>
 <body>
@@ -43,31 +44,28 @@
 <div id="login-screen">
     <div class="login-box">
         <h2 style="font-family:'Libre Baskerville'; margin-bottom:20px;">BOZP Portál</h2>
-        <div class="field-group"><label>E-mail</label><input type="email" id="login-email" value="admin@toman-bozp.cz"></div>
-        <div class="field-group"><label>Heslo</label><input type="password" id="login-password" value="admin"></div>
-        <button class="btn-login" style="width:100%" onclick="doLogin()">Vstoupit do systému</button>
+        <div class="field-group"><label>E-mail</label><input type="email" id="login-email" placeholder="vas@email.cz"></div>
+        <div class="field-group"><label>Heslo</label><input type="password" id="login-password" placeholder="Heslo"></div>
+        <button class="btn btn-navy" style="width:100%" id="login-btn" onclick="doLogin()">Vstoupit do systému</button>
+        <p id="login-msg" style="color:red; font-size:12px; margin-top:10px;"></p>
     </div>
 </div>
 
 <div id="app">
     <div class="topbar">
-        <div style="font-weight:bold">Ing. Ondřej Toman — Administrace</div>
-        <button onclick="location.reload()" style="background:none; border:1px solid #fff; color:#fff; padding:5px 10px; border-radius:5px; cursor:pointer">Odhlásit</button>
+        <div style="font-weight:bold" id="user-display">Ing. Ondřej Toman — Administrace</div>
+        <button onclick="location.reload()" style="background:none; border:1px solid #fff; color:#fff; padding:4px 8px; border-radius:4px; cursor:pointer">Odhlásit</button>
     </div>
-
     <div class="app-layout">
         <nav class="sidebar">
             <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">📊 Dashboard</div>
             <div class="nav-item" id="nav-klienti" onclick="showPage('klienti')">🏢 Klienti</div>
             <div class="nav-item" id="nav-terminy" onclick="showPage('terminy')">📅 Všechny termíny</div>
         </nav>
-
         <main class="main">
             <div id="page-dashboard">
                 <h1 style="margin-bottom:20px; font-family:'Libre Baskerville'">Aktuální přehled</h1>
-                <div class="stats-grid" id="stats-grid">
-                    <div class="stat-card">Načítám data...</div>
-                </div>
+                <div class="stats-grid" id="stats-grid"><div class="stat-card">Načítám...</div></div>
                 <h3 style="margin-bottom:10px">Nejbližší kritické termíny</h3>
                 <div class="table-wrap">
                     <table>
@@ -76,25 +74,23 @@
                     </table>
                 </div>
             </div>
-
             <div id="page-klienti" class="hidden">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px">
                     <h1 style="font-family:'Libre Baskerville'">Správa klientů</h1>
-                    <button class="btn-sm" onclick="openModal()">+ Přidat firmu</button>
+                    <button class="btn btn-navy" id="add-client-btn" onclick="openModal()">+ Přidat firmu</button>
                 </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>ID</th><th>Název firmy</th><th>IČO</th><th>E-mail</th><th>Akce</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Firma</th><th>IČO</th><th>E-mail</th><th class="admin-only">Akce</th></tr></thead>
                         <tbody id="klienti-tbody"></tbody>
                     </table>
                 </div>
             </div>
-
             <div id="page-terminy" class="hidden">
-                <h1 style="margin-bottom:20px; font-family:'Libre Baskerville'">Všechny revize a školení</h1>
+                <h1 style="margin-bottom:20px; font-family:'Libre Baskerville'">Všechny termíny</h1>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Firma</th><th>Typ úkonu</th><th>Poslední</th><th>Příští termín</th><th>Zbývá dní</th></tr></thead>
+                        <thead><tr><th>Firma</th><th>Úkon</th><th>Poslední</th><th>Příští termín</th><th>Zbývá dní</th></tr></thead>
                         <tbody id="all-terminy-tbody"></tbody>
                     </table>
                 </div>
@@ -105,45 +101,73 @@
 
 <div class="modal-overlay" id="add-modal">
     <div class="modal">
-        <h2 style="margin-bottom:20px">Nová firma</h2>
+        <h2>Nová firma</h2><br>
         <form onsubmit="saveNewClient(event)">
             <div class="field-group"><label>Název firmy</label><input type="text" id="f-name" required></div>
             <div class="field-group"><label>IČO</label><input type="text" id="f-ico"></div>
             <div class="field-group"><label>E-mail pro notifikace</label><input type="email" id="f-email" required></div>
-            <hr style="margin:20px 0">
-            <h4 style="margin-bottom:10px">Výchozí termíny</h4>
-            <div class="field-group">
-                <label>Školení BOZP (12 měs.)</label>
-                <input type="date" class="task-init" data-name="Školení BOZP" data-period="12" data-cat="skoleni">
-            </div>
-            <div class="field-group">
-                <label>Revize elektro (24 měs.)</label>
-                <input type="date" class="task-init" data-name="Revize elektro" data-period="24" data-cat="revize">
-            </div>
-            <div style="display:flex; gap:10px; margin-top:20px">
-                <button type="submit" class="btn-login" id="save-btn">Uložit firmu</button>
-                <button type="button" class="btn-sm" style="background:#ccc" onclick="closeModal()">Zrušit</button>
+            <hr><br>
+            <div class="field-group"><label>Školení BOZP (poslední datum)</label><input type="date" class="task-init" data-name="Školení BOZP" data-period="12"></div>
+            <div class="field-group"><label>Revize elektro (poslední datum)</label><input type="date" class="task-init" data-name="Revize elektro" data-period="24"></div>
+            <div style="display:flex; gap:10px">
+                <button type="submit" class="btn btn-navy" id="save-btn">Uložit</button>
+                <button type="button" class="btn" style="background:#ccc" onclick="closeModal()">Zrušit</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdzr3oNh4w6kbKVtLNSgThYYB35Uk6Ycf76lpddjVxGsSDiqdmV7__Md-Tf3E1Qx4O/exec"; // ZDE VLOŽ SVOU URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdzr3oNh4w6kbKVtLNSgThYYB35Uk6Ycf76lpddjVxGsSDiqdmV7__Md-Tf3E1Qx4O/exec"; 
     
     let CLIENTS = [];
     let TASKS = [];
+    let USER_ROLE = "client";
 
-    async function loadData() {
+    async function doLogin() {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-password').value;
+        const msg = document.getElementById('login-msg');
+        
+        msg.innerText = "Ověřování...";
+
         try {
-            const response = await fetch(SCRIPT_URL, { method: 'GET', redirect: 'follow' });
-            const data = await response.json();
-            CLIENTS = data.clients || [];
-            TASKS = data.tasks || [];
-            renderAll();
-        } catch (err) {
-            console.error(err);
-        }
+            const res = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "login", email: email, password: pass })
+            }).then(r => r.json());
+
+            if (res.status === "needs_reg") {
+                const newPass = prompt("První přihlášení. Zvolte si své heslo:");
+                if (newPass) {
+                    await fetch(SCRIPT_URL, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "login", email: email, newPassword: newPass })
+                    });
+                    alert("Heslo nastaveno. Nyní se znovu přihlaste.");
+                }
+                location.reload();
+                return;
+            }
+
+            if (res.status === "success") {
+                CLIENTS = res.clients;
+                TASKS = res.tasks;
+                USER_ROLE = res.role;
+
+                if (USER_ROLE === "client") {
+                    document.getElementById('add-client-btn').style.display = "none";
+                    document.getElementById('nav-klienti').style.display = "none";
+                    document.getElementById('user-display').innerText = "Klientský portál — " + CLIENTS[0].name;
+                }
+
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                renderAll();
+            } else {
+                msg.innerText = res.msg;
+            }
+        } catch (e) { msg.innerText = "Chyba spojení se skriptem."; }
     }
 
     function renderAll() {
@@ -159,103 +183,78 @@
         return d;
     }
 
-    function daysDiff(targetDate) {
+    function daysDiff(target) {
         const today = new Date();
         today.setHours(0,0,0,0);
-        return Math.round((targetDate - today) / (1000 * 60 * 60 * 24));
+        return Math.round((target - today) / (1000*60*60*24));
     }
 
     function renderDashboard() {
         const tbody = document.getElementById('dashboard-tbody');
         tbody.innerHTML = "";
-        let expiredCount = 0;
+        let expired = 0;
         TASKS.forEach(t => {
-            const nextDate = addMonths(t.posledni, t.perioda);
-            const days = daysDiff(nextDate);
-            if (days < 30) {
-                if (days < 0) expiredCount++;
-                tbody.innerHTML += `<tr><td>${t.odpovedny}</td><td>${t.typ}</td><td>${nextDate.toLocaleDateString('cs-CZ')}</td><td><span class="badge ${days < 0 ? 'badge-danger' : 'badge-ok'}">${days < 0 ? 'PO TERMÍNU' : 'BLÍŽÍ SE'}</span></td></tr>`;
+            const next = addMonths(t.posledni, t.perioda);
+            const diff = daysDiff(next);
+            if (diff < 30) {
+                if (diff < 0) expired++;
+                tbody.innerHTML += `<tr><td>${t.odpovedny}</td><td>${t.typ}</td><td>${next.toLocaleDateString('cs-CZ')}</td><td><span class="badge ${diff < 0 ? 'badge-danger' : 'badge-ok'}">${diff < 0 ? 'Expirováno' : 'Blíží se'}</span></td></tr>`;
             }
         });
-        document.getElementById('stats-grid').innerHTML = `<div class="stat-card"><h3>${CLIENTS.length}</h3><p>Klientů celkem</p></div><div class="stat-card" style="color:${expiredCount > 0 ? 'red' : 'inherit'}"><h3>${expiredCount}</h3><p>Expirovaných úkonů</p></div>`;
+        document.getElementById('stats-grid').innerHTML = `<div class="stat-card"><h3>${CLIENTS.length}</h3><p>Klientů</p></div><div class="stat-card" style="color:${expired > 0 ? 'red' : 'inherit'}"><h3>${expired}</h3><p>Expirováno</p></div>`;
     }
 
     function renderKlienti() {
-        const tbody = document.getElementById('klienti-tbody');
-        tbody.innerHTML = CLIENTS.map(c => `
+        document.getElementById('klienti-tbody').innerHTML = CLIENTS.map(c => `
             <tr>
                 <td>${c.clientId}</td>
                 <td><strong>${c.name}</strong></td>
                 <td>${c.ico || '-'}</td>
                 <td>${c.email}</td>
-                <td><button class="btn-sm btn-danger" onclick="deleteClient(${c.clientId})">Smazat</button></td>
+                <td class="${USER_ROLE === 'admin' ? '' : 'hidden'}"><button class="btn btn-danger" onclick="deleteClient(${c.clientId})">Smazat</button></td>
             </tr>
         `).join('');
     }
 
     function renderTerminy() {
-        const tbody = document.getElementById('all-terminy-tbody');
-        tbody.innerHTML = TASKS.map(t => {
+        document.getElementById('all-terminy-tbody').innerHTML = TASKS.map(t => {
             const next = addMonths(t.posledni, t.perioda);
-            return `<tr><td>${t.odpovedny}</td><td>${t.typ}</td><td>${t.posledni ? new Date(t.posledni).toLocaleDateString('cs-CZ') : '-'}</td><td>${next.toLocaleDateString('cs-CZ')}</td><td>${daysDiff(next)} dní</td></tr>`;
+            return `<tr><td>${t.odpovedny}</td><td>${t.typ}</td><td>${t.posledni || '-'}</td><td>${next.toLocaleDateString('cs-CZ')}</td><td>${daysDiff(next)} dní</td></tr>`;
         }).join('');
     }
 
-    function doLogin() {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        loadData();
-    }
-
-    function showPage(pageId) {
+    function showPage(id) {
         ['dashboard', 'klienti', 'terminy'].forEach(p => document.getElementById('page-' + p).classList.add('hidden'));
-        document.getElementById('page-' + pageId).classList.remove('hidden');
+        document.getElementById('page-' + id).classList.remove('hidden');
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById('nav-' + pageId).classList.add('active');
+        document.getElementById('nav-' + id).classList.add('active');
     }
 
     function openModal() { document.getElementById('add-modal').classList.add('open'); }
     function closeModal() { document.getElementById('add-modal').classList.remove('open'); }
 
-    async function saveNewClient(event) {
-        event.preventDefault();
+    async function saveNewClient(e) {
+        e.preventDefault();
         const btn = document.getElementById('save-btn');
-        btn.disabled = true;
-        btn.innerText = "Ukládám...";
-
+        btn.disabled = true; btn.innerText = "Ukládám...";
         const payload = {
             action: "addClient",
             name: document.getElementById('f-name').value,
             ico: document.getElementById('f-ico').value,
             email: document.getElementById('f-email').value,
-            obor: "BOZP",
             tasks: []
         };
-
-        document.querySelectorAll('.task-init').forEach(input => {
-            if (input.value) {
-                payload.tasks.push({
-                    typ: input.dataset.name,
-                    kategorie: input.dataset.cat,
-                    posledni: input.value,
-                    perioda: input.dataset.period
-                });
-            }
+        document.querySelectorAll('.task-init').forEach(i => {
+            if (i.value) payload.tasks.push({ typ: i.dataset.name, posledni: i.value, perioda: i.dataset.period });
         });
-
         await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
         alert("Firma přidána!");
-        closeModal();
         location.reload();
     }
 
     async function deleteClient(id) {
-        if (!confirm("Opravdu smazat tuto firmu a všechny její termíny?")) return;
-        
-        const payload = { action: "deleteClient", id: id };
-        
-        await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-        alert("Firma smazána!");
+        if (!confirm("Smazat firmu i termíny?")) return;
+        await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "deleteClient", id: id }) });
         location.reload();
     }
 </script>
