@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOZP Portál | Ing. Ondřej Toman</title>
+    <title>BOZP Portál | Detailní Správa</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #0f172a; --accent: #c9a44e; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --text-light: #64748b; --danger: #ef4444; --border: #e2e8f0; --radius: 14px; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
+        
+        /* Login screen */
         #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1e293b, #0f172a); padding: 20px; }
         .login-box { background: white; border-radius: 28px; padding: 3rem; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
+        
+        /* App Layout */
         #app { display: none; flex-direction: column; min-height: 100vh; }
         .navbar { background: var(--primary); color: white; padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .container { display: flex; flex: 1; width: 100%; }
@@ -18,44 +22,40 @@
         .nav-link { padding: 12px 16px; text-decoration: none; color: var(--text-light); border-radius: var(--radius); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; }
         .nav-link.active { background: var(--primary); color: white; }
         .content { flex: 1; padding: 2rem; }
-        .card { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        
+        /* UI Components */
+        .card { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: #f8fafc; padding: 1rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--text-light); border-bottom: 1px solid var(--border); }
+        th { background: #f8fafc; padding: 1rem; text-align: left; font-size: 0.75rem; color: var(--text-light); border-bottom: 1px solid var(--border); }
         td { padding: 1rem; border-top: 1px solid #f1f5f9; font-size: 0.9rem; }
-        .btn { padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
+        .btn { padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; font-size: 0.85rem; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-accent { background: var(--accent); color: var(--primary); }
-        .btn-danger { background: #fee2e2; color: var(--danger); font-size: 0.75rem; }
-        .admin-badge { background: var(--accent); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; margin-left: 8px; }
+        .btn-danger { background: #fee2e2; color: var(--danger); }
         .hidden { display: none !important; }
-        .search-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 1.5rem; outline: none; }
-        .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        
+        /* Modals */
+        .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
         .modal { background: white; padding: 2rem; border-radius: 20px; width: 90%; max-width: 500px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <div class="login-box">
-        <div style="background: var(--accent); width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-weight: 800; color: var(--primary);">OT</div>
-        <h2 style="font-weight: 800; margin-bottom: 0.5rem;">BOZP Portál</h2>
-        <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 2rem;">Ing. Ondřej Toman</p>
-        <input type="email" id="login-email" placeholder="E-mail" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); margin-bottom: 10px;">
-        <input type="password" id="login-password" placeholder="Heslo" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); margin-bottom: 1.5rem;">
-        <button class="btn btn-primary" style="width: 100%; padding: 14px;" onclick="doLogin()">Přihlásit se</button>
-        <button class="btn" style="background:none; color: var(--text-light); font-size: 0.8rem; margin-top: 15px;" onclick="handleForgotPassword()">Zapomenuté heslo?</button>
-        <p id="login-msg" style="margin-top: 10px; color: var(--danger); font-size: 0.8rem;"></p>
+        <h2 style="margin-bottom: 1.5rem;">BOZP Portál</h2>
+        <input type="email" id="login-email" placeholder="E-mail">
+        <input type="password" id="login-password" placeholder="Heslo">
+        <button class="btn btn-primary" style="width: 100%;" onclick="doLogin()">Přihlásit se</button>
+        <p id="login-msg" style="color:red; margin-top:10px; font-size:0.8rem;"></p>
     </div>
 </div>
 
 <div id="app">
     <header class="navbar">
-        <div style="font-weight: 800;">OT <span style="color:var(--accent)">PORTÁL</span></div>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <span id="user-display" style="font-size: 0.85rem; font-weight: 700;">Uživatel</span>
-            <span id="admin-indicator" class="admin-badge hidden">ADMINISTRÁTOR</span>
-            <button onclick="logout()" style="background:rgba(255,255,255,0.1); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:0.75rem;">Odhlásit</button>
-        </div>
+        <div style="font-weight: 800;">OT PORTÁL</div>
+        <button onclick="logout()" class="btn" style="background:rgba(255,255,255,0.1); color:white;">Odhlásit</button>
     </header>
 
     <div class="container">
@@ -67,10 +67,8 @@
 
         <main class="content">
             <div id="page-dashboard">
-                <h1 id="welcome-msg" style="margin-bottom: 20px;">Vítejte</h1>
-                <div id="stats-area" style="display:flex; gap:20px; margin-bottom:30px;"></div>
+                <h1 style="margin-bottom:20px;">Blízké termíny</h1>
                 <div class="card">
-                    <div style="padding:15px; font-weight:800; border-bottom:1px solid var(--border)">Blízké termíny (30 dní)</div>
                     <table>
                         <thead><tr><th>Firma</th><th>Úkon</th><th>Datum</th><th>Status</th></tr></thead>
                         <tbody id="dashboard-tbody"></tbody>
@@ -79,167 +77,179 @@
             </div>
 
             <div id="page-klienti" class="hidden">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
                     <h1>Seznam klientů</h1>
-                    <button class="btn btn-accent" id="admin-add-btn" onclick="openModal()">+ Nová firma</button>
+                    <button class="btn btn-accent" onclick="openModal('modal-client')">+ Nový klient</button>
                 </div>
-                <input type="text" class="search-input" id="search-input" placeholder="Hledat firmu, IČO nebo email..." onkeyup="filterClients()">
-                <div class="card">
-                    <table>
-                        <thead><tr><th>Firma / Adresa</th><th>IČO</th><th>Kontakt</th><th class="admin-only">Akce</th></tr></thead>
-                        <tbody id="klienti-tbody"></tbody>
-                    </table>
+                <div class="card"><table id="table-klienti">
+                    <thead><tr><th>Firma</th><th>IČO</th><th>Kontakt</th><th>Akce</th></tr></thead>
+                    <tbody id="klienti-tbody"></tbody>
+                </table></div>
+            </div>
+
+            <div id="page-detail" class="hidden">
+                <button class="btn" onclick="showPage('klienti')" style="margin-bottom:20px;">← Zpět</button>
+                <div class="card" style="padding:20px;">
+                    <h1 id="det-nazev">Název firmy</h1>
+                    <p id="det-info" style="color:var(--text-light)"></p>
                 </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3>Revize a úkony</h3>
+                    <button class="btn btn-accent" id="btn-add-task">+ Přidat úkon</button>
+                </div>
+                <div class="card"><table>
+                    <thead><tr><th>Úkon</th><th>Naposledy</th><th>Perioda</th><th>Příště</th><th>Akce</th></tr></thead>
+                    <tbody id="detail-tbody"></tbody>
+                </table></div>
             </div>
 
             <div id="page-terminy" class="hidden">
                 <h1 style="margin-bottom:20px;">Všechny termíny</h1>
-                <div class="card">
-                    <table>
-                        <thead><tr><th>Klient</th><th>Úkon</th><th>Příště</th><th>Zbývá</th></tr></thead>
-                        <tbody id="terminy-tbody"></tbody>
-                    </table>
-                </div>
+                <div class="card"><table>
+                    <thead><tr><th>Firma</th><th>Úkon</th><th>Datum</th><th>Zbývá</th></tr></thead>
+                    <tbody id="terminy-tbody"></tbody>
+                </table></div>
             </div>
         </main>
     </div>
 </div>
 
-<div class="modal-backdrop" id="modal">
+<div class="modal-backdrop" id="modal-client">
     <div class="modal">
-        <h2 style="margin-bottom:15px;">Nová firma</h2>
-        <form onsubmit="saveNewClient(event)">
-            <input type="text" id="f-name" placeholder="Název firmy" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);">
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="f-ico" placeholder="IČO" style="width:50%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);">
-                <input type="text" id="f-phone" placeholder="Telefon" style="width:50%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);">
-            </div>
-            <input type="email" id="f-email" placeholder="E-mail" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);">
-            <input type="text" id="f-address" placeholder="Adresa sídla" style="width:100%; padding:10px; margin-bottom:20px; border-radius:8px; border:1px solid var(--border);">
-            <div style="display:flex; gap:10px;">
-                <button type="submit" class="btn btn-primary" id="save-btn" style="flex:2">Uložit</button>
-                <button type="button" class="btn" onclick="closeModal()" style="flex:1; background:#eee">Zavřít</button>
-            </div>
-        </form>
+        <h2>Nová firma</h2>
+        <input type="text" id="f-name" placeholder="Název firmy">
+        <input type="text" id="f-ico" placeholder="IČO">
+        <input type="email" id="f-email" placeholder="E-mail">
+        <button class="btn btn-primary" onclick="saveClient()">Uložit</button>
+        <button class="btn" onclick="closeModal('modal-client')">Zrušit</button>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="modal-task">
+    <div class="modal">
+        <h2 id="task-title">Úkon</h2>
+        <input type="hidden" id="t-old-type">
+        <input type="text" id="t-type" placeholder="Název úkonu">
+        <label>Datum poslední revize:</label>
+        <input type="date" id="t-date">
+        <label>Perioda (měsíce):</label>
+        <input type="number" id="t-period">
+        <button class="btn btn-primary" onclick="saveTask()">Uložit úkon</button>
+        <button class="btn" onclick="closeModal('modal-task')">Zrušit</button>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdzr3oNh4w6kbKVtLNSgThYYB35Uk6Ycf76lpddjVxGsSDiqdmV7__Md-Tf3E1Qx4O/exec"; 
-    let CLIENTS = [], TASKS = [], USER_ROLE = "client";
+    const SCRIPT_URL = "VLOŽ_SVOU_URL_ZDE"; 
+    let CLIENTS = [], TASKS = [], USER_ROLE = "client", CURRENT_CO = "";
+
+    async function api(payload) {
+        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+        return res.json();
+    }
 
     async function doLogin() {
-    const email = document.getElementById('login-email').value;
-    const pass = document.getElementById('login-password').value;
-    if(!email) return;
-    
-    const msgEl = document.getElementById('login-msg');
-    msgEl.innerText = "Přihlašování...";
-
-    try {
-        // Změna: Používáme text/plain, aby nás nezastavil CORS
-        const res = await fetch(SCRIPT_URL, { 
-            method: "POST", 
-            mode: "no-cors", // Zkusíme nejdřív bezpečný režim, pokud selže res.json()
-            body: JSON.stringify({ action: "login", email, password: pass }) 
-        });
-
-        // POZOR: Google Apps Script vyžaduje specifické zacházení. 
-        // Pokud 'no-cors' nefunguje pro čtení dat, musíme nechat výchozí, 
-        // ale poslat to jako prostý text.
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const res = await api({ action: "login", email, password });
         
-        const response = await fetch(SCRIPT_URL, {
-            method: "POST",
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: "login", email, password: pass })
-        });
-        
-        const result = await response.json();
-
-        if (result.status === "success") {
-            localStorage.setItem('bozp_session', JSON.stringify({email, pass}));
-            USER_ROLE = result.role;
-            TASKS = result.tasks;
-
-            // FILTR: Pokud je přihlášen admin, odfiltrujeme ze seznamu klientů všechny s rolí "admin"
-            if (USER_ROLE === "admin") {
-                // Filtrujeme podle sloupce Obor (index 3 v Apps Scriptu)
-                CLIENTS = result.clients.filter(c => c.Obor && c.Obor.toLowerCase() !== "admin");
-                
-                document.getElementById('admin-indicator').classList.remove('hidden');
-                document.getElementById('user-display').innerText = "Ing. Ondřej Toman";
-                document.getElementById('welcome-msg').innerText = "Dobrý den, pane inženýre";
-            } else {
-                CLIENTS = result.clients;
-                document.getElementById('nav-klienti').classList.add('hidden');
-                document.getElementById('admin-add-btn').classList.add('hidden');
-            }
-
+        if (res.status === "success") {
+            CLIENTS = res.clients; TASKS = res.tasks; USER_ROLE = res.role;
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'flex';
             renderAll();
-        } else { 
-            msgEl.innerText = result.msg; 
+        } else {
+            document.getElementById('login-msg').innerText = res.msg;
         }
-    } catch(e) { 
-        console.error("Detail chyby:", e);
-        msgEl.innerText = "Chyba připojení. Zkontrolujte URL nebo autorizaci skriptu."; 
     }
-}
 
     function renderAll() {
+        // Dashboard
         const dBody = document.getElementById('dashboard-tbody');
-        dBody.innerHTML = ""; let exp = 0;
-        TASKS.filter(t => CLIENTS.some(c => c.Firma === t.Firma)).forEach(t => {
-            const n = addMonths(t.posledni, t.perioda);
-            const d = daysDiff(n);
-            if(d < 30) {
-                if(d < 0) exp++;
-                dBody.innerHTML += `<tr><td><strong>${t.Firma}</strong></td><td>${t.typ}</td><td>${n.toLocaleDateString('cs-CZ')}</td><td><span style="color:${d < 0 ? 'red':'orange'}">${d < 0 ? 'Prošlé' : 'Brzy'}</span></td></tr>`;
+        dBody.innerHTML = "";
+        TASKS.forEach(t => {
+            const next = addMonths(t.posledni, t.perioda);
+            const diff = daysDiff(next);
+            if (diff < 30) {
+                dBody.innerHTML += `<tr><td>${t.Firma}</td><td>${t.typ}</td><td>${next.toLocaleDateString()}</td><td>${diff < 0 ? '❌ PROŠLÉ':'⚠️ BLÍŽÍ SE'}</td></tr>`;
             }
         });
-        document.getElementById('stats-area').innerHTML = `<div class="card" style="padding:20px; flex:1; border-left:5px solid var(--accent)"><h3>${CLIENTS.length}</h3><p>Klientů</p></div><div class="card" style="padding:20px; flex:1; border-left:5px solid var(--danger)"><h3>${exp}</h3><p>Expirací</p></div>`;
-        renderKlienti(CLIENTS);
-        document.getElementById('terminy-tbody').innerHTML = TASKS.filter(t => CLIENTS.some(c => c.Firma === t.Firma)).map(t => {
-            const n = addMonths(t.posledni, t.perioda);
-            const d = n ? daysDiff(n) : '-';
-            return `<tr><td>${t.Firma}</td><td>${t.typ}</td><td>${n ? n.toLocaleDateString('cs-CZ') : '-'}</td><td>${d} dní</td></tr>`;
+
+        // Klienti
+        document.getElementById('klienti-tbody').innerHTML = CLIENTS.map(c => `
+            <tr>
+                <td><a href="#" onclick="openDetail('${c.Firma}')" style="font-weight:bold; color:var(--primary);">${c.Firma}</a></td>
+                <td>${c.ICI}</td>
+                <td>${c.email}</td>
+                <td><button class="btn-danger btn" onclick="deleteClient(${c.Id})">Smazat</button></td>
+            </tr>
+        `).join('');
+
+        // Všechny termíny
+        document.getElementById('terminy-tbody').innerHTML = TASKS.map(t => {
+            const next = addMonths(t.posledni, t.perioda);
+            return `<tr><td>${t.Firma}</td><td>${t.typ}</td><td>${next.toLocaleDateString()}</td><td>${daysDiff(next)} dní</td></tr>`;
         }).join('');
     }
 
-    function renderKlienti(data) {
-        document.getElementById('klienti-tbody').innerHTML = data.map(c => `<tr><td><strong>${c.Firma}</strong><br><small>${c.Adresa || ''}</small></td><td>${c.ICI || ''}</td><td>${c.email}<br><small>${c.Telefon || ''}</small></td><td class="${USER_ROLE !== 'admin' ? 'hidden':''}"><button class="btn-danger" onclick="deleteClient(${c.Id})">Smazat</button></td></tr>`).join('');
+    function openDetail(co) {
+        CURRENT_CO = co;
+        const client = CLIENTS.find(c => c.Firma === co);
+        document.getElementById('det-nazev').innerText = co;
+        document.getElementById('det-info').innerText = client.email;
+        document.getElementById('btn-add-task').onclick = () => {
+            document.getElementById('task-title').innerText = "Nový úkon";
+            document.getElementById('t-old-type').value = "";
+            openModal('modal-task');
+        };
+
+        const coTasks = TASKS.filter(t => t.Firma === co);
+        document.getElementById('detail-tbody').innerHTML = coTasks.map(t => {
+            const next = addMonths(t.posledni, t.perioda);
+            return `<tr>
+                <td>${t.typ}</td>
+                <td>${new Date(t.posledni).toLocaleDateString()}</td>
+                <td>${t.perioda} m</td>
+                <td>${next.toLocaleDateString()}</td>
+                <td><button class="btn" onclick="editTaskModal('${t.typ}', '${t.posledni}', ${t.perioda})">Upravit</button></td>
+            </tr>`;
+        }).join('');
+        showPage('detail');
     }
 
-    function filterClients() {
-        const val = document.getElementById('search-input').value.toLowerCase();
-        renderKlienti(CLIENTS.filter(c => c.Firma.toLowerCase().includes(val) || (c.ICI && c.ICI.toString().includes(val)) || c.email.toLowerCase().includes(val)));
+    function editTaskModal(type, last, period) {
+        document.getElementById('task-title').innerText = "Upravit úkon";
+        document.getElementById('t-old-type').value = type;
+        document.getElementById('t-type').value = type;
+        document.getElementById('t-date').value = new Date(last).toISOString().split('T')[0];
+        document.getElementById('t-period').value = period;
+        openModal('modal-task');
     }
 
-    async function handleForgotPassword() {
-        const email = document.getElementById('login-email').value;
-        if(!email) { alert("Zadejte e-mail."); return; }
-        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "forgotPassword", email }) }).then(r => r.json());
-        if(res.status === "code_sent") {
-            const code = prompt("Kód z e-mailu:");
-            const newPass = prompt("Nové heslo:");
-            if(code && newPass) {
-                const res2 = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "resetPassword", email, code, newPassword: newPass }) }).then(r => r.json());
-                alert(res2.status === "success" ? "Heslo změněno!" : res2.msg);
-            }
-        } else alert(res.msg);
+    async function saveTask() {
+        const oldType = document.getElementById('t-old-type').value;
+        const payload = {
+            action: oldType ? "editTask" : "addTask",
+            companyName: CURRENT_CO,
+            oldType: oldType,
+            type: document.getElementById('t-type').value,
+            lastDate: document.getElementById('t-date').value,
+            period: document.getElementById('t-period').value
+        };
+        await api(payload);
+        location.reload();
     }
 
-    async function saveNewClient(e) { e.preventDefault(); const p = { action: "addClient", name: document.getElementById('f-name').value, ico: document.getElementById('f-ico').value, email: document.getElementById('f-email').value, phone: document.getElementById('f-phone').value, address: document.getElementById('f-address').value }; await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(p) }); location.reload(); }
-    async function deleteClient(id) { if(confirm("Smazat?")) { await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "deleteClient", id }) }); location.reload(); } }
-    function showPage(id) { document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById('nav-'+id).classList.add('active'); ['dashboard','klienti','terminy'].forEach(p => document.getElementById('page-'+p).classList.add('hidden')); document.getElementById('page-'+id).classList.remove('hidden'); }
-    function logout() { localStorage.removeItem('bozp_session'); location.reload(); }
-    function addMonths(d, m) { if(!d) return null; const r = new Date(d); r.setMonth(r.getMonth() + parseInt(m)); return r; }
-    function daysDiff(t) { if(!t) return 0; return Math.round((t - new Date().setHours(0,0,0,0)) / 86400000); }
-    function openModal() { document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    
-    window.onload = () => { const s = localStorage.getItem('bozp_session'); if(s) { const a = JSON.parse(s); document.getElementById('login-email').value = a.email; document.getElementById('login-password').value = a.pass; doLogin(); } };
+    // Pomocné funkce
+    function showPage(id) {
+        ['dashboard','klienti','terminy','detail'].forEach(p => document.getElementById('page-'+p).classList.add('hidden'));
+        document.getElementById('page-'+id).classList.remove('hidden');
+    }
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function addMonths(d, m) { let r = new Date(d); r.setMonth(r.getMonth() + parseInt(m)); return r; }
+    function daysDiff(d) { return Math.round((d - new Date()) / 86400000); }
+    function logout() { location.reload(); }
 </script>
 </body>
 </html>
