@@ -10,12 +10,10 @@
         :root { --primary: #0f172a; --accent: #c9a44e; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --text-light: #64748b; --danger: #ef4444; --warn: #f59e0b; --border: #e2e8f0; --radius: 14px; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
-        
         #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1e293b, #0f172a); padding: 20px; }
         .login-box { background: white; border-radius: 28px; padding: 2.5rem; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
         .ot-logo { background: var(--accent); width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-weight: 800; color: var(--primary); }
         input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; outline: none; font-family: inherit; font-size: 16px; }
-        
         #app { display: none; flex-direction: column; min-height: 100vh; }
         .navbar { background: var(--primary); color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 900; }
         .container { display: flex; flex: 1; flex-direction: row; }
@@ -23,30 +21,21 @@
         .nav-link { padding: 12px; border-radius: 10px; cursor: pointer; color: var(--text-light); font-weight: 600; margin-bottom: 5px; transition: 0.2s; white-space: nowrap; }
         .nav-link:hover { background: #f1f5f9; color: var(--primary); }
         .nav-link.active { background: var(--primary); color: white; }
-        
         .content { flex: 1; padding: 1.5rem; max-width: 1200px; margin: 0 auto; width: 100%; }
         .card { background: white; border-radius: var(--radius); border: 1px solid var(--border); padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
-        
         .table-wrapper { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 500px; }
         th { text-align: left; padding: 12px; font-size: 0.75rem; color: var(--text-light); border-bottom: 1px solid var(--border); text-transform: uppercase; }
         td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
-        
         .btn { padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-accent { background: var(--accent); color: var(--primary); }
         .btn-danger { background: #fee2e2; color: var(--danger); }
+        .btn-info { background: #e0f2fe; color: #0369a1; }
         .btn-icon { padding: 8px; border-radius: 6px; }
-
         .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); padding: 15px; }
         .modal { background: white; padding: 2rem; border-radius: 24px; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
-
-        @media (max-width: 768px) {
-            .container { flex-direction: column; }
-            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 0.5rem; display: flex; overflow-x: auto; }
-            .content { padding: 1rem; }
-        }
-
+        @media (max-width: 768px) { .container { flex-direction: column; } .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 0.5rem; display: flex; overflow-x: auto; } .content { padding: 1rem; } }
         .status-red { color: var(--danger); font-weight: 800; }
         .badge-plan { background:#dbeafe; color:#1e40af; font-size:0.7rem; padding:2px 6px; border-radius:4px; font-weight:700; display:inline-block; margin-top:4px; }
         .badge-period { background:#f1f5f9; color:var(--text-light); font-size:0.7rem; padding:2px 6px; border-radius:4px; }
@@ -62,7 +51,6 @@
         <input type="email" id="login-email" placeholder="E-mail">
         <input type="password" id="login-password" placeholder="Heslo">
         <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Přihlásit se</button>
-        <div style="margin-top: 15px;"><a href="#" onclick="forgotPassword()" style="color: var(--text-light); font-size: 0.8rem; text-decoration: none;">Zapomněli jste heslo?</a></div>
         <p id="login-msg" style="color: red; margin-top: 15px; font-size: 0.8rem;"></p>
     </div>
 </div>
@@ -88,7 +76,7 @@
             </div>
             <div id="page-terminy" class="hidden"><h1 style="margin-bottom: 1rem;">Harmonogram výjezdů</h1><div id="calendar"></div></div>
             <div id="page-klienti" class="hidden admin-only">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;"><h1>Správa klientů</h1><button class="btn btn-accent" onclick="openModal('modal-client')">+ Nový klient</button></div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;"><h1>Správa klientů</h1><button class="btn btn-accent" id="btn-add-c">+ Nový klient</button></div>
                 <div class="card"><div class="table-wrapper"><table><thead><tr><th>Firma</th><th>Email</th><th>Akce</th></tr></thead><tbody id="klienti-tbody"></tbody></table></div></div>
             </div>
             <div id="page-detail" class="hidden admin-only">
@@ -101,9 +89,9 @@
     </div>
 </div>
 
+<div class="modal-backdrop" id="modal-client"><div class="modal"><h2 id="client-modal-title">Nový klient</h2><br><input type="hidden" id="f-id"><input type="text" id="f-name" placeholder="Název firmy"><input type="email" id="f-email" placeholder="Email"><input type="text" id="f-address" placeholder="Adresa"><button class="btn btn-primary" style="width:100%" onclick="saveClient()">Uložit klienta</button><button class="btn" onclick="closeModal('modal-client')" style="margin-top:0.5rem; width:100%; background:none;">Zavřít</button></div></div>
 <div class="modal-backdrop" id="modal-plan"><div class="modal"><h2>Naplánovat výjezd</h2><br><p id="plan-info" style="margin-bottom:1rem; font-weight:700; background: #f1f5f9; padding: 12px; border-radius: 8px; font-size:0.9rem;"></p><label style="font-size:0.7rem; font-weight:800;">DATUM:</label><input type="date" id="p-date"><label style="font-size:0.7rem; font-weight:800;">TECHNIK:</label><select id="p-admin"></select><button class="btn btn-primary" style="width:100%" onclick="savePlan()">Uložit do kalendáře</button><button class="btn" onclick="closeModal('modal-plan')" style="margin-top:0.5rem; width:100%; background:none;">Zrušit</button></div></div>
 <div class="modal-backdrop" id="modal-ev-detail"><div class="modal"><h2 id="ev-title"></h2><hr style="margin:1rem 0; border:0; border-top:1px solid var(--border);"><p><strong>📝 Úkon:</strong> <span id="ev-task"></span></p><p><strong>👤 Technik:</strong> <span id="ev-admin"></span></p><p id="ev-addr-row"><strong>📍 Adresa:</strong> <span id="ev-address"></span></p><div id="ev-map-link" style="margin-top:1.5rem;"></div><button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="closeModal('modal-ev-detail')">Zavřít</button></div></div>
-<div class="modal-backdrop" id="modal-client"><div class="modal"><h2>Nový klient</h2><br><input type="text" id="f-name" placeholder="Název firmy"><input type="email" id="f-email" placeholder="Email"><input type="text" id="f-address" placeholder="Adresa"><button class="btn btn-primary" style="width:100%" onclick="saveClient()">Vytvořit klienta</button><button class="btn" onclick="closeModal('modal-client')" style="margin-top:0.5rem; width:100%; background:none;">Zavřít</button></div></div>
 <div class="modal-backdrop" id="modal-task"><div class="modal"><h2 id="task-modal-title">Úkon a perioda</h2><br><input type="hidden" id="t-old-type"><label style="font-size:0.7rem; font-weight:800;">NÁZEV ÚKONU:</label><input type="text" id="t-type" placeholder="např. Kontrola hasicích přístrojů"><label style="font-size:0.7rem; font-weight:800;">DATUM POSLEDNÍ REVIZE:</label><input type="date" id="t-date"><label style="font-size:0.7rem; font-weight:800;">PERIODA (V MĚSÍCÍCH):</label><input type="number" id="t-period" placeholder="např. 12"><button class="btn btn-primary" style="width:100%" onclick="saveTask()">Uložit úkon</button><button class="btn" onclick="closeModal('modal-task')" style="margin-top:0.5rem; width:100%; background:none;">Zrušit</button></div></div>
 
 <script>
@@ -111,22 +99,19 @@
     let CLIENTS = [], TASKS = [], CURR_CO = "", USER_ROLE = "client", USER_NAME = "", CALENDAR;
     const COLORS = ["#2563eb", "#059669", "#d97706", "#7c3aed", "#db2777", "#ea580c"];
 
-    // RYCHLÝ START: Načtení z paměti telefonu
     window.onload = async function() {
         const savedUser = localStorage.getItem('bozp_user');
         const cachedData = localStorage.getItem('bozp_cache');
-
         if (savedUser) {
             const u = JSON.parse(savedUser);
             document.getElementById('login-email').value = u.email;
             document.getElementById('login-password').value = u.password;
-
             if (cachedData) {
                 const data = JSON.parse(cachedData);
                 CLIENTS = data.clients; TASKS = data.tasks; USER_ROLE = data.role; USER_NAME = data.userName;
-                bootApp(); // Spustíme aplikaci hned se starými daty
+                bootApp();
             }
-            doLogin(true); // Na pozadí stáhneme čerstvá data
+            doLogin(true);
         }
     };
 
@@ -145,7 +130,6 @@
         const password = document.getElementById('login-password').value;
         if(!email || !password) return;
         if(!isSilent) document.getElementById('login-msg').innerText = "Ověřování...";
-        
         try {
             const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "login", email, password }) }).then(r => r.json());
             if (res.status === "success") {
@@ -153,23 +137,13 @@
                 const me = res.clients.find(c => c.email === email);
                 USER_NAME = me ? me.Firma : "Uživatel";
                 USER_ROLE = res.role; CLIENTS = res.clients; TASKS = res.tasks;
-
-                // Uložení čerstvých dat do paměti
                 localStorage.setItem('bozp_cache', JSON.stringify({ clients: CLIENTS, tasks: TASKS, role: USER_ROLE, userName: USER_NAME }));
                 bootApp();
             } else if(!isSilent) { document.getElementById('login-msg').innerText = res.msg; }
         } catch(e) { if(!isSilent) document.getElementById('login-msg').innerText = "Chyba serveru."; }
     }
 
-    async function forgotPassword() {
-        const email = prompt("Zadejte svůj e-mail:");
-        if (!email) return;
-        alert("Požadavek odeslán.");
-        fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "forgotPassword", email: email }) });
-    }
-
     async function api(payload) {
-        // Optimistické zavření oken
         const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) }).then(r => r.json());
         if(res.status === "success") { await refreshData(); return res; }
         alert(res.msg || "Chyba"); return res;
@@ -186,7 +160,6 @@
 
     function applyPermissions() {
         document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', USER_ROLE !== 'admin'));
-        document.getElementById('dash-title').innerText = USER_ROLE === 'admin' ? "Přehled blížících se termínů" : "Moje revize a intervaly";
     }
 
     function render() {
@@ -219,10 +192,59 @@
         });
         if(CALENDAR) { CALENDAR.removeAllEvents(); CALENDAR.addEventSource(calEvents); }
         if(USER_ROLE === 'admin') {
-            document.getElementById('klienti-tbody').innerHTML = CLIENTS.filter(c => c.Obor?.toLowerCase() !== 'admin').map(c => `<tr><td><a href="#" onclick="openDetail('${c.Firma}')" style="font-weight:800; color:var(--primary); text-decoration:none;">${c.Firma} 🔗</a></td><td>${c.email}</td><td><button class="btn btn-danger btn-icon" onclick="deleteClient(${c.Id})">🗑️</button></td></tr>`).join('');
+            document.getElementById('klienti-tbody').innerHTML = CLIENTS.filter(c => c.Obor?.toLowerCase() !== 'admin').map(c => `
+                <tr>
+                    <td><a href="#" onclick="openDetail('${c.Firma}')" style="font-weight:800; color:var(--primary); text-decoration:none;">${c.Firma} 🔗</a></td>
+                    <td>${c.email}</td>
+                    <td>
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn btn-info btn-icon" onclick="editClientPop(${c.Id})">✏️</button>
+                            <button class="btn btn-danger btn-icon" onclick="deleteClient(${c.Id})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>`).join('');
         }
     }
 
+    // --- FUNKCE PRO KLIENTY ---
+    function editClientPop(id) {
+        const c = CLIENTS.find(x => x.Id == id);
+        if(!c) return;
+        document.getElementById('client-modal-title').innerText = "Upravit firmu";
+        document.getElementById('f-id').value = c.Id;
+        document.getElementById('f-name').value = c.Firma;
+        document.getElementById('f-email').value = c.email;
+        document.getElementById('f-address').value = c.Adresa || "";
+        openModal('modal-client');
+    }
+
+    document.getElementById('btn-add-c').onclick = () => {
+        document.getElementById('client-modal-title').innerText = "Nový klient";
+        document.getElementById('f-id').value = "";
+        document.getElementById('f-name').value = "";
+        document.getElementById('f-email').value = "";
+        document.getElementById('f-address').value = "";
+        openModal('modal-client');
+    };
+
+    async function saveClient() {
+        const id = document.getElementById('f-id').value;
+        const name = document.getElementById('f-name').value;
+        const email = document.getElementById('f-email').value;
+        const address = document.getElementById('f-address').value;
+        if(!name || !email) return alert("Jméno a email jsou povinné!");
+        
+        closeModal('modal-client');
+        await api({ 
+            action: id ? "editClient" : "addClient", 
+            id: id,
+            name: name, 
+            email: email, 
+            address: address 
+        });
+    }
+
+    // --- OSTATNÍ FUNKCE ---
     function initCalendar() { if (!CALENDAR) { CALENDAR = new FullCalendar.Calendar(document.getElementById('calendar'), { initialView: 'dayGridMonth', locale: 'cs', firstDay: 1, height: 'auto', headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth' }, eventClick: info => openEventDetail(info.event) }); CALENDAR.render(); } }
     function openEventDetail(event) {
         const p = event.extendedProps; const klient = CLIENTS.find(c => c.Firma === p.firma) || {};
@@ -255,11 +277,9 @@
     function populateAdmins() { const sel = document.getElementById('p-admin'); const ads = CLIENTS.filter(c => c.Obor?.toLowerCase() === 'admin'); sel.innerHTML = '<option value="">-- vybrat --</option>' + ads.map(a => `<option value="${a.Firma}">${a.Firma}</option>`).join(''); }
 
     async function savePlan() { closeModal('modal-plan'); await api({ action: "planTask", companyName: CURR_CO, taskType: CURR_TASK, plannedDate: document.getElementById('p-date').value, adminName: document.getElementById('p-admin').value }); }
-    async function saveClient() { closeModal('modal-client'); await api({ action: "addClient", name: document.getElementById('f-name').value, email: document.getElementById('f-email').value, address: document.getElementById('f-address').value }); }
     async function saveTask() { closeModal('modal-task'); await api({ action: document.getElementById('t-old-type').value ? "editTask" : "addTask", companyName: CURR_CO, oldType: document.getElementById('t-old-type').value, type: document.getElementById('t-type').value, lastDate: document.getElementById('t-date').value, period: document.getElementById('t-period').value }); }
     async function deleteTask(type) { if(confirm("Smazat úkon?")) await api({ action: "deleteTask", companyName: CURR_CO, taskType: type }); }
     async function deleteClient(id) { if(confirm("Smazat klienta?")) await api({ action: "deleteClient", id }); }
-    
     function editTaskPop(typ, date, per) { document.getElementById('task-modal-title').innerText = "Upravit úkon"; document.getElementById('t-old-type').value = typ; document.getElementById('t-type').value = typ; document.getElementById('t-date').value = new Date(date).toISOString().split('T')[0]; document.getElementById('t-period').value = per; openModal('modal-task'); }
     document.getElementById('btn-add-t').onclick = () => { document.getElementById('task-modal-title').innerText = "Nový úkon"; document.getElementById('t-old-type').value = ""; document.getElementById('t-type').value = ""; document.getElementById('t-date').value = ""; document.getElementById('t-period').value = ""; openModal('modal-task'); };
 </script>
