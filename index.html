@@ -62,11 +62,7 @@
         <input type="email" id="login-email" placeholder="E-mail">
         <input type="password" id="login-password" placeholder="Heslo">
         <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Přihlásit se</button>
-        
-        <div style="margin-top: 15px;">
-            <a href="#" onclick="forgotPassword()" style="color: var(--text-light); font-size: 0.8rem; text-decoration: none;">Zapomněli jste heslo?</a>
-        </div>
-        
+        <div style="margin-top: 15px;"><a href="#" onclick="forgotPassword()" style="color: var(--text-light); font-size: 0.8rem; text-decoration: none;">Zapomněli jste heslo?</a></div>
         <p id="login-msg" style="color: red; margin-top: 15px; font-size: 0.8rem;"></p>
     </div>
 </div>
@@ -90,20 +86,14 @@
                 <h1 id="dash-title" style="margin-bottom: 1rem;">Moje termíny</h1>
                 <div class="card"><div class="table-wrapper"><table><thead><tr><th>Firma</th><th>Úkon</th><th>Interval</th><th>Příští termín</th><th class="admin-only">Akce</th></tr></thead><tbody id="dash-tbody"></tbody></table></div></div>
             </div>
-
-            <div id="page-terminy" class="hidden">
-                <h1 style="margin-bottom: 1rem;">Harmonogram výjezdů</h1>
-                <div id="calendar"></div>
-            </div>
-
+            <div id="page-terminy" class="hidden"><h1 style="margin-bottom: 1rem;">Harmonogram výjezdů</h1><div id="calendar"></div></div>
             <div id="page-klienti" class="hidden admin-only">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;"><h1>Správa klientů</h1><button class="btn btn-accent" onclick="openModal('modal-client')">+ Nový klient</button></div>
                 <div class="card"><div class="table-wrapper"><table><thead><tr><th>Firma</th><th>Email</th><th>Akce</th></tr></thead><tbody id="klienti-tbody"></tbody></table></div></div>
             </div>
-
             <div id="page-detail" class="hidden admin-only">
                 <button class="btn" onclick="showPage('klienti')" style="margin-bottom:1rem; background:#e2e8f0; font-size:0.8rem;">← Zpět na seznam</button>
-                <div class="card"><h1 id="dash-name"></h1><p id="det-email"></p><p id="det-address" style="color:var(--text-light); font-size:0.8rem;"></p></div>
+                <div class="card"><h1 id="det-name"></h1><p id="det-email"></p><p id="det-address" style="color:var(--text-light); font-size:0.8rem;"></p></div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center;"><h3>Evidence a intervaly</h3><button class="btn btn-accent" id="btn-add-t">+ Přidat úkon</button></div>
                 <div class="card"><div class="table-wrapper"><table><thead><tr><th>Úkon</th><th>Interval</th><th>Expirace</th><th>Stav</th><th>Akce</th></tr></thead><tbody id="det-tbody"></tbody></table></div></div>
             </div>
@@ -111,116 +101,91 @@
     </div>
 </div>
 
-<div class="modal-backdrop" id="modal-plan"><div class="modal">
-    <h2>Naplánovat výjezd</h2><br>
-    <p id="plan-info" style="margin-bottom:1rem; font-weight:700; background: #f1f5f9; padding: 12px; border-radius: 8px; font-size:0.9rem;"></p>
-    <label style="font-size:0.7rem; font-weight:800;">DATUM:</label><input type="date" id="p-date">
-    <label style="font-size:0.7rem; font-weight:800;">TECHNIK:</label><select id="p-admin"></select>
-    <button class="btn btn-primary" style="width:100%" onclick="savePlan()">Uložit do kalendáře</button>
-    <button class="btn" onclick="closeModal('modal-plan')" style="margin-top:0.5rem; width:100%; background:none;">Zrušit</button>
-</div></div>
-
-<div class="modal-backdrop" id="modal-ev-detail"><div class="modal">
-    <h2 id="ev-title"></h2><hr style="margin:1rem 0; border:0; border-top:1px solid var(--border);">
-    <p><strong>📝 Úkon:</strong> <span id="ev-task"></span></p>
-    <p><strong>👤 Technik:</strong> <span id="ev-admin"></span></p>
-    <p id="ev-addr-row"><strong>📍 Adresa:</strong> <span id="ev-address"></span></p>
-    <div id="ev-map-link" style="margin-top:1.5rem;"></div>
-    <button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="closeModal('modal-ev-detail')">Zavřít</button>
-</div></div>
-
-<div class="modal-backdrop" id="modal-client"><div class="modal">
-    <h2>Nový klient</h2><br>
-    <input type="text" id="f-name" placeholder="Název firmy"><input type="email" id="f-email" placeholder="Email"><input type="text" id="f-address" placeholder="Adresa">
-    <button class="btn btn-primary" style="width:100%" onclick="saveClient()">Vytvořit klienta</button>
-    <button class="btn" onclick="closeModal('modal-client')" style="margin-top:0.5rem; width:100%; background:none;">Zavřít</button>
-</div></div>
-
-<div class="modal-backdrop" id="modal-task"><div class="modal">
-    <h2 id="task-modal-title">Úkon a perioda</h2><br>
-    <input type="hidden" id="t-old-type">
-    <label style="font-size:0.7rem; font-weight:800;">NÁZEV ÚKONU:</label><input type="text" id="t-type" placeholder="např. Kontrola hasicích přístrojů">
-    <label style="font-size:0.7rem; font-weight:800;">DATUM POSLEDNÍ REVIZE:</label><input type="date" id="t-date">
-    <label style="font-size:0.7rem; font-weight:800;">PERIODA (V MĚSÍCÍCH):</label><input type="number" id="t-period" placeholder="např. 12">
-    <button class="btn btn-primary" style="width:100%" onclick="saveTask()">Uložit úkon</button>
-    <button class="btn" onclick="closeModal('modal-task')" style="margin-top:0.5rem; width:100%; background:none;">Zrušit</button>
-</div></div>
+<div class="modal-backdrop" id="modal-plan"><div class="modal"><h2>Naplánovat výjezd</h2><br><p id="plan-info" style="margin-bottom:1rem; font-weight:700; background: #f1f5f9; padding: 12px; border-radius: 8px; font-size:0.9rem;"></p><label style="font-size:0.7rem; font-weight:800;">DATUM:</label><input type="date" id="p-date"><label style="font-size:0.7rem; font-weight:800;">TECHNIK:</label><select id="p-admin"></select><button class="btn btn-primary" style="width:100%" onclick="savePlan()">Uložit do kalendáře</button><button class="btn" onclick="closeModal('modal-plan')" style="margin-top:0.5rem; width:100%; background:none;">Zrušit</button></div></div>
+<div class="modal-backdrop" id="modal-ev-detail"><div class="modal"><h2 id="ev-title"></h2><hr style="margin:1rem 0; border:0; border-top:1px solid var(--border);"><p><strong>📝 Úkon:</strong> <span id="ev-task"></span></p><p><strong>👤 Technik:</strong> <span id="ev-admin"></span></p><p id="ev-addr-row"><strong>📍 Adresa:</strong> <span id="ev-address"></span></p><div id="ev-map-link" style="margin-top:1.5rem;"></div><button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="closeModal('modal-ev-detail')">Zavřít</button></div></div>
+<div class="modal-backdrop" id="modal-client"><div class="modal"><h2>Nový klient</h2><br><input type="text" id="f-name" placeholder="Název firmy"><input type="email" id="f-email" placeholder="Email"><input type="text" id="f-address" placeholder="Adresa"><button class="btn btn-primary" style="width:100%" onclick="saveClient()">Vytvořit klienta</button><button class="btn" onclick="closeModal('modal-client')" style="margin-top:0.5rem; width:100%; background:none;">Zavřít</button></div></div>
+<div class="modal-backdrop" id="modal-task"><div class="modal"><h2 id="task-modal-title">Úkon a perioda</h2><br><input type="hidden" id="t-old-type"><label style="font-size:0.7rem; font-weight:800;">NÁZEV ÚKONU:</label><input type="text" id="t-type" placeholder="např. Kontrola hasicích přístrojů"><label style="font-size:0.7rem; font-weight:800;">DATUM POSLEDNÍ REVIZE:</label><input type="date" id="t-date"><label style="font-size:0.7rem; font-weight:800;">PERIODA (V MĚSÍCÍCH):</label><input type="number" id="t-period" placeholder="např. 12"><button class="btn btn-primary" style="width:100%" onclick="saveTask()">Uložit úkon</button><button class="btn" onclick="closeModal('modal-task')" style="margin-top:0.5rem; width:100%; background:none;">Zrušit</button></div></div>
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdzr3oNh4w6kbKVtLNSgThYYB35Uk6Ycf76lpddjVxGsSDiqdmV7__Md-Tf3E1Qx4O/exec"; 
     let CLIENTS = [], TASKS = [], CURR_CO = "", USER_ROLE = "client", USER_NAME = "", CALENDAR;
     const COLORS = ["#2563eb", "#059669", "#d97706", "#7c3aed", "#db2777", "#ea580c"];
 
+    // RYCHLÝ START: Načtení z paměti telefonu
     window.onload = async function() {
-        const saved = localStorage.getItem('bozp_user');
-        if (saved) {
-            const u = JSON.parse(saved);
+        const savedUser = localStorage.getItem('bozp_user');
+        const cachedData = localStorage.getItem('bozp_cache');
+
+        if (savedUser) {
+            const u = JSON.parse(savedUser);
             document.getElementById('login-email').value = u.email;
             document.getElementById('login-password').value = u.password;
-            await doLogin();
+
+            if (cachedData) {
+                const data = JSON.parse(cachedData);
+                CLIENTS = data.clients; TASKS = data.tasks; USER_ROLE = data.role; USER_NAME = data.userName;
+                bootApp(); // Spustíme aplikaci hned se starými daty
+            }
+            doLogin(true); // Na pozadí stáhneme čerstvá data
         }
     };
 
-    async function doLogin() {
+    function bootApp() {
+        applyPermissions();
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        document.getElementById('user-display').innerText = USER_NAME + (USER_ROLE === 'admin' ? ' (Správce)' : '');
+        initCalendar();
+        populateAdmins();
+        render();
+    }
+
+    async function doLogin(isSilent = false) {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
         if(!email || !password) return;
-        document.getElementById('login-msg').innerText = "Ověřování...";
+        if(!isSilent) document.getElementById('login-msg').innerText = "Ověřování...";
         
         try {
             const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "login", email, password }) }).then(r => r.json());
             if (res.status === "success") {
                 localStorage.setItem('bozp_user', JSON.stringify({ email, password }));
-                CLIENTS = res.clients; TASKS = res.tasks; USER_ROLE = res.role;
-                const me = CLIENTS.find(c => c.email === email);
+                const me = res.clients.find(c => c.email === email);
                 USER_NAME = me ? me.Firma : "Uživatel";
+                USER_ROLE = res.role; CLIENTS = res.clients; TASKS = res.tasks;
 
-                applyPermissions();
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-                document.getElementById('user-display').innerText = USER_NAME + (USER_ROLE === 'admin' ? ' (Správce)' : '');
-                
-                initCalendar();
-                populateAdmins();
-                render();
-            } else { document.getElementById('login-msg').innerText = res.msg; }
-        } catch(e) { document.getElementById('login-msg').innerText = "Chyba serveru."; }
+                // Uložení čerstvých dat do paměti
+                localStorage.setItem('bozp_cache', JSON.stringify({ clients: CLIENTS, tasks: TASKS, role: USER_ROLE, userName: USER_NAME }));
+                bootApp();
+            } else if(!isSilent) { document.getElementById('login-msg').innerText = res.msg; }
+        } catch(e) { if(!isSilent) document.getElementById('login-msg').innerText = "Chyba serveru."; }
     }
 
-    // NOVÁ FUNKCE PRO OBNOVU HESLA
     async function forgotPassword() {
-        const email = prompt("Zadejte svůj e-mail pro obnovu hesla:");
+        const email = prompt("Zadejte svůj e-mail:");
         if (!email) return;
+        alert("Požadavek odeslán.");
+        fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "forgotPassword", email: email }) });
+    }
 
-        const msgEl = document.getElementById('login-msg');
-        msgEl.style.color = "var(--accent)";
-        msgEl.innerText = "Odesílám žádost o heslo...";
+    async function api(payload) {
+        // Optimistické zavření oken
+        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) }).then(r => r.json());
+        if(res.status === "success") { await refreshData(); return res; }
+        alert(res.msg || "Chyba"); return res;
+    }
 
-        try {
-            const res = await fetch(SCRIPT_URL, { 
-                method: "POST", 
-                body: JSON.stringify({ action: "forgotPassword", email: email }) 
-            }).then(r => r.json());
-
-            if (res.status === "success") {
-                alert("Heslo bylo odesláno na váš e-mail.");
-                msgEl.innerText = "";
-            } else {
-                msgEl.style.color = "red";
-                msgEl.innerText = res.msg || "E-mail nebyl nalezen.";
-            }
-        } catch (e) {
-            msgEl.style.color = "red";
-            msgEl.innerText = "Chyba při komunikaci se serverem.";
-        }
+    async function refreshData() {
+        const u = JSON.parse(localStorage.getItem('bozp_user'));
+        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "login", email: u.email, password: u.password }) }).then(r => r.json());
+        CLIENTS = res.clients; TASKS = res.tasks;
+        localStorage.setItem('bozp_cache', JSON.stringify({ clients: CLIENTS, tasks: TASKS, role: USER_ROLE, userName: USER_NAME }));
+        render();
+        if(!document.getElementById('page-detail').classList.contains('hidden')) openDetail(CURR_CO);
     }
 
     function applyPermissions() {
-        const adminsOnly = document.querySelectorAll('.admin-only');
-        adminsOnly.forEach(el => {
-            if (USER_ROLE === 'admin') el.classList.remove('hidden');
-            else el.classList.add('hidden');
-        });
+        document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', USER_ROLE !== 'admin'));
         document.getElementById('dash-title').innerText = USER_ROLE === 'admin' ? "Přehled blížících se termínů" : "Moje revize a intervaly";
     }
 
@@ -228,15 +193,13 @@
         const dBody = document.getElementById('dash-tbody'); dBody.innerHTML = "";
         const calEvents = [];
         const adminMap = {};
-        const admins = CLIENTS.filter(c => c.Obor && c.Obor.toLowerCase() === 'admin');
-        admins.forEach((a, i) => adminMap[a.Firma] = COLORS[i % COLORS.length]);
+        CLIENTS.filter(c => c.Obor?.toLowerCase() === 'admin').forEach((a, i) => adminMap[a.Firma] = COLORS[i % COLORS.length]);
 
         const visibleTasks = USER_ROLE === 'admin' ? TASKS : TASKS.filter(t => t.Firma === USER_NAME);
 
         visibleTasks.forEach(t => {
             const next = addMonths(t.posledni, t.perioda);
             const diff = daysDiff(next);
-            
             if (t.planned && t.admin) {
                 calEvents.push({ 
                     title: USER_ROLE === 'admin' ? `[${t.admin}] ${t.Firma}` : t.typ, 
@@ -245,151 +208,60 @@
                     extendedProps: { task: t.typ, admin: t.admin, firma: t.Firma }
                 });
             }
-
             if (USER_ROLE === 'admin' || diff <= 60) {
-                const isPlanned = t.planned && t.planned !== "";
-                const pDate = isPlanned ? new Date(t.planned).toLocaleDateString('cs-CZ') : "";
-                
+                const isPlanned = !!(t.planned && t.planned !== "");
                 dBody.innerHTML += `<tr>
-                    <td><strong>${t.Firma}</strong></td>
-                    <td>${t.typ}</td>
-                    <td><span class="badge-period">${t.perioda} měs.</span></td>
-                    <td>
-                        <span class="${diff <= 14 ? 'status-red' : ''}">${next.toLocaleDateString('cs-CZ')}</span>
-                        ${isPlanned ? `<br><span class="badge-plan">📅 Termín: ${pDate}</span>` : ''}
-                    </td>
-                    <td class="admin-only ${USER_ROLE !== 'admin' ? 'hidden' : ''}">
-                        <button class="btn ${isPlanned ? 'btn-primary' : 'btn-accent'} btn-icon" onclick="openPlan('${t.Firma}', '${t.typ}', '${t.planned||''}', '${t.admin||''}')">
-                            ${isPlanned ? '✏️' : '📅'}
-                        </button>
-                    </td>
+                    <td><strong>${t.Firma}</strong></td><td>${t.typ}</td><td><span class="badge-period">${t.perioda} m.</span></td>
+                    <td><span class="${diff <= 14 ? 'status-red' : ''}">${next.toLocaleDateString('cs-CZ')}</span>${isPlanned ? `<br><span class="badge-plan">📅 ${new Date(t.planned).toLocaleDateString('cs-CZ')}</span>` : ''}</td>
+                    <td class="admin-only ${USER_ROLE !== 'admin' ? 'hidden' : ''}"><button class="btn ${isPlanned ? 'btn-primary' : 'btn-accent'} btn-icon" onclick="openPlan('${t.Firma}', '${t.typ}', '${t.planned||''}', '${t.admin||''}')">${isPlanned ? '✏️' : '📅'}</button></td>
                 </tr>`;
             }
         });
-
         if(CALENDAR) { CALENDAR.removeAllEvents(); CALENDAR.addEventSource(calEvents); }
         if(USER_ROLE === 'admin') {
-            document.getElementById('klienti-tbody').innerHTML = CLIENTS.filter(c => c.Obor && c.Obor.toLowerCase() !== 'admin').map(c => `<tr><td><a href="#" onclick="openDetail('${c.Firma}')" style="font-weight:800; color:var(--primary); text-decoration:none;">${c.Firma} 🔗</a></td><td>${c.email}</td><td><button class="btn btn-danger btn-icon" onclick="deleteClient(${c.Id})">🗑️</button></td></tr>`).join('');
+            document.getElementById('klienti-tbody').innerHTML = CLIENTS.filter(c => c.Obor?.toLowerCase() !== 'admin').map(c => `<tr><td><a href="#" onclick="openDetail('${c.Firma}')" style="font-weight:800; color:var(--primary); text-decoration:none;">${c.Firma} 🔗</a></td><td>${c.email}</td><td><button class="btn btn-danger btn-icon" onclick="deleteClient(${c.Id})">🗑️</button></td></tr>`).join('');
         }
     }
 
-    function initCalendar() {
-        if (CALENDAR) return;
-        CALENDAR = new FullCalendar.Calendar(document.getElementById('calendar'), {
-            initialView: 'dayGridMonth', locale: 'cs', firstDay: 1, height: 'auto',
-            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth' },
-            eventClick: info => openEventDetail(info.event)
-        });
-        CALENDAR.render();
-    }
-
+    function initCalendar() { if (!CALENDAR) { CALENDAR = new FullCalendar.Calendar(document.getElementById('calendar'), { initialView: 'dayGridMonth', locale: 'cs', firstDay: 1, height: 'auto', headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth' }, eventClick: info => openEventDetail(info.event) }); CALENDAR.render(); } }
     function openEventDetail(event) {
-        const p = event.extendedProps;
-        const klient = CLIENTS.find(c => c.Firma === p.firma) || {};
+        const p = event.extendedProps; const klient = CLIENTS.find(c => c.Firma === p.firma) || {};
         document.getElementById('ev-title').innerText = USER_ROLE === 'admin' ? p.firma : "Plánovaný termín";
-        document.getElementById('ev-task').innerText = p.task;
-        document.getElementById('ev-admin').innerText = p.admin;
-        
+        document.getElementById('ev-task').innerText = p.task; document.getElementById('ev-admin').innerText = p.admin;
         if(USER_ROLE === 'admin') {
-            document.getElementById('ev-addr-row').classList.remove('hidden');
-            document.getElementById('ev-address').innerText = klient.Adresa || "Nezadána";
-            document.getElementById('ev-map-link').innerHTML = klient.Adresa ? `<a href="http://maps.google.com/?q=${encodeURIComponent(klient.Adresa)}" target="_blank" class="btn btn-accent" style="width:100%; text-decoration:none;">Navigovat do firmy 🗺️</a>` : "";
-        } else {
-            document.getElementById('ev-addr-row').classList.add('hidden');
-            document.getElementById('ev-map-link').innerHTML = "";
-        }
+            document.getElementById('ev-addr-row').classList.remove('hidden'); document.getElementById('ev-address').innerText = klient.Adresa || "Nezadána";
+            document.getElementById('ev-map-link').innerHTML = klient.Adresa ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(klient.Adresa)}" target="_blank" class="btn btn-accent" style="width:100%; text-decoration:none;">Navigovat 🗺️</a>` : "";
+        } else { document.getElementById('ev-addr-row').classList.add('hidden'); document.getElementById('ev-map-link').innerHTML = ""; }
         openModal('modal-ev-detail');
     }
 
-    function openPlan(firma, typ, date, adm) {
-        CURR_CO = firma; CURR_TASK = typ;
-        document.getElementById('plan-info').innerText = `${firma} - ${typ}`;
-        document.getElementById('p-date').value = date ? new Date(date).toISOString().split('T')[0] : "";
-        document.getElementById('p-admin').value = adm || "";
-        openModal('modal-plan');
-    }
-
-    async function api(payload) {
-        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) }).then(r => r.json());
-        if(res.status === "success") { await refreshData(); return res; }
-        else { alert(res.msg || "Chyba"); return res; }
-    }
-
-    async function refreshData() {
-        const u = JSON.parse(localStorage.getItem('bozp_user'));
-        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "login", email: u.email, password: u.password }) }).then(r => r.json());
-        CLIENTS = res.clients; TASKS = res.tasks; render();
-        if(!document.getElementById('page-detail').classList.contains('hidden')) openDetail(CURR_CO);
-    }
-
+    function openPlan(firma, typ, date, adm) { CURR_CO = firma; CURR_TASK = typ; document.getElementById('plan-info').innerText = `${firma} - ${typ}`; document.getElementById('p-date').value = date ? new Date(date).toISOString().split('T')[0] : ""; document.getElementById('p-admin').value = adm || ""; openModal('modal-plan'); }
     function openDetail(co) {
-        if(USER_ROLE !== 'admin') return;
-        CURR_CO = co; const c = CLIENTS.find(x => x.Firma === co);
-        document.getElementById('dash-name').innerText = co; 
-        document.getElementById('det-email').innerText = c.email; 
-        document.getElementById('det-address').innerText = c.Adresa || "";
-        
-        const coTasks = TASKS.filter(t => t.Firma === co);
-        document.getElementById('det-tbody').innerHTML = coTasks.map(t => {
-            const next = addMonths(t.posledni, t.perioda);
-            const diff = daysDiff(next);
-            return `<tr>
-                <td><strong>${t.typ}</strong></td>
-                <td><span class="badge-period">${t.perioda} měs.</span></td>
-                <td>${next.toLocaleDateString('cs-CZ')}</td>
-                <td class="${diff <= 14 ? 'status-red' : ''}">${diff} dní</td>
-                <td>
-                    <button class="btn btn-icon" style="background:#f1f5f9" onclick="editTaskPop('${t.typ}', '${t.posledni}', ${t.perioda})">✏️</button>
-                    <button class="btn btn-danger btn-icon" onclick="deleteTask('${t.typ}')">🗑️</button>
-                </td>
-            </tr>`;
+        if(USER_ROLE !== 'admin') return; CURR_CO = co; const c = CLIENTS.find(x => x.Firma === co);
+        document.getElementById('det-name').innerText = co; document.getElementById('det-email').innerText = c.email; document.getElementById('det-address').innerText = c.Adresa || "";
+        document.getElementById('det-tbody').innerHTML = TASKS.filter(t => t.Firma === co).map(t => {
+            const next = addMonths(t.posledni, t.perioda); const diff = daysDiff(next);
+            return `<tr><td><strong>${t.typ}</strong></td><td><span class="badge-period">${t.perioda} m.</span></td><td>${next.toLocaleDateString('cs-CZ')}</td><td class="${diff <= 14 ? 'status-red' : ''}">${diff} dní</td><td><button class="btn btn-icon" style="background:#f1f5f9" onclick="editTaskPop('${t.typ}', '${t.posledni}', ${t.perioda})">✏️</button><button class="btn btn-danger btn-icon" onclick="deleteTask('${t.typ}')">🗑️</button></td></tr>`;
         }).join('');
         showPage('detail');
     }
 
-    function showPage(id) { 
-        ['dashboard','klienti','terminy','detail'].forEach(p => document.getElementById('page-'+p).classList.add('hidden')); 
-        document.getElementById('page-'+id).classList.remove('hidden'); 
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); 
-        if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.add('active');
-        if(id === 'terminy' && CALENDAR) setTimeout(() => CALENDAR.render(), 100);
-    }
-    
-    function logout() { localStorage.removeItem('bozp_user'); location.reload(); }
+    function showPage(id) { ['dashboard','klienti','terminy','detail'].forEach(p => document.getElementById('page-'+p).classList.add('hidden')); document.getElementById('page-'+id).classList.remove('hidden'); document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.add('active'); if(id === 'terminy' && CALENDAR) setTimeout(() => CALENDAR.render(), 100); }
+    function logout() { localStorage.clear(); location.reload(); }
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function addMonths(d, m) { let r = new Date(d); r.setMonth(r.getMonth() + parseInt(m)); return r; }
     function daysDiff(d) { const today = new Date(); today.setHours(0,0,0,0); const target = new Date(d); target.setHours(0,0,0,0); return Math.ceil((target - today) / (1000 * 60 * 60 * 24)); }
-    
-    function populateAdmins() {
-        const sel = document.getElementById('p-admin');
-        const ads = CLIENTS.filter(c => c.Obor && c.Obor.toLowerCase() === 'admin');
-        sel.innerHTML = '<option value="">-- vybrat technika --</option>' + ads.map(a => `<option value="${a.Firma}">${a.Firma}</option>`).join('');
-    }
+    function populateAdmins() { const sel = document.getElementById('p-admin'); const ads = CLIENTS.filter(c => c.Obor?.toLowerCase() === 'admin'); sel.innerHTML = '<option value="">-- vybrat --</option>' + ads.map(a => `<option value="${a.Firma}">${a.Firma}</option>`).join(''); }
 
-    async function savePlan() { await api({ action: "planTask", companyName: CURR_CO, taskType: CURR_TASK, plannedDate: document.getElementById('p-date').value, adminName: document.getElementById('p-admin').value }); closeModal('modal-plan'); }
-    async function saveClient() { await api({ action: "addClient", name: document.getElementById('f-name').value, email: document.getElementById('f-email').value, address: document.getElementById('f-address').value }); closeModal('modal-client'); }
-    async function saveTask() { await api({ action: document.getElementById('t-old-type').value ? "editTask" : "addTask", companyName: CURR_CO, oldType: document.getElementById('t-old-type').value, type: document.getElementById('t-type').value, lastDate: document.getElementById('t-date').value, period: document.getElementById('t-period').value }); closeModal('modal-task'); }
-    async function deleteTask(type) { if(confirm("Opravdu smazat tento úkon?")) await api({ action: "deleteTask", companyName: CURR_CO, taskType: type }); }
+    async function savePlan() { closeModal('modal-plan'); await api({ action: "planTask", companyName: CURR_CO, taskType: CURR_TASK, plannedDate: document.getElementById('p-date').value, adminName: document.getElementById('p-admin').value }); }
+    async function saveClient() { closeModal('modal-client'); await api({ action: "addClient", name: document.getElementById('f-name').value, email: document.getElementById('f-email').value, address: document.getElementById('f-address').value }); }
+    async function saveTask() { closeModal('modal-task'); await api({ action: document.getElementById('t-old-type').value ? "editTask" : "addTask", companyName: CURR_CO, oldType: document.getElementById('t-old-type').value, type: document.getElementById('t-type').value, lastDate: document.getElementById('t-date').value, period: document.getElementById('t-period').value }); }
+    async function deleteTask(type) { if(confirm("Smazat úkon?")) await api({ action: "deleteTask", companyName: CURR_CO, taskType: type }); }
     async function deleteClient(id) { if(confirm("Smazat klienta?")) await api({ action: "deleteClient", id }); }
     
-    function editTaskPop(typ, date, per) { 
-        document.getElementById('task-modal-title').innerText = "Upravit úkon"; 
-        document.getElementById('t-old-type').value = typ; 
-        document.getElementById('t-type').value = typ; 
-        document.getElementById('t-date').value = new Date(date).toISOString().split('T')[0]; 
-        document.getElementById('t-period').value = per; 
-        openModal('modal-task'); 
-    }
-    
-    document.getElementById('btn-add-t').onclick = () => { 
-        document.getElementById('task-modal-title').innerText = "Nový úkon pro firmu"; 
-        document.getElementById('t-old-type').value = ""; 
-        document.getElementById('t-type').value = "";
-        document.getElementById('t-date').value = "";
-        document.getElementById('t-period').value = "";
-        openModal('modal-task'); 
-    };
+    function editTaskPop(typ, date, per) { document.getElementById('task-modal-title').innerText = "Upravit úkon"; document.getElementById('t-old-type').value = typ; document.getElementById('t-type').value = typ; document.getElementById('t-date').value = new Date(date).toISOString().split('T')[0]; document.getElementById('t-period').value = per; openModal('modal-task'); }
+    document.getElementById('btn-add-t').onclick = () => { document.getElementById('task-modal-title').innerText = "Nový úkon"; document.getElementById('t-old-type').value = ""; document.getElementById('t-type').value = ""; document.getElementById('t-date').value = ""; document.getElementById('t-period').value = ""; openModal('modal-task'); };
 </script>
 </body>
 </html>
