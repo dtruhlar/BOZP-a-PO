@@ -62,6 +62,11 @@
         <input type="email" id="login-email" placeholder="E-mail">
         <input type="password" id="login-password" placeholder="Heslo">
         <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Přihlásit se</button>
+        
+        <div style="margin-top: 15px;">
+            <a href="#" onclick="forgotPassword()" style="color: var(--text-light); font-size: 0.8rem; text-decoration: none;">Zapomněli jste heslo?</a>
+        </div>
+        
         <p id="login-msg" style="color: red; margin-top: 15px; font-size: 0.8rem;"></p>
     </div>
 </div>
@@ -98,7 +103,7 @@
 
             <div id="page-detail" class="hidden admin-only">
                 <button class="btn" onclick="showPage('klienti')" style="margin-bottom:1rem; background:#e2e8f0; font-size:0.8rem;">← Zpět na seznam</button>
-                <div class="card"><h1 id="det-name"></h1><p id="det-email"></p><p id="det-address" style="color:var(--text-light); font-size:0.8rem;"></p></div>
+                <div class="card"><h1 id="dash-name"></h1><p id="det-email"></p><p id="det-address" style="color:var(--text-light); font-size:0.8rem;"></p></div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center;"><h3>Evidence a intervaly</h3><button class="btn btn-accent" id="btn-add-t">+ Přidat úkon</button></div>
                 <div class="card"><div class="table-wrapper"><table><thead><tr><th>Úkon</th><th>Interval</th><th>Expirace</th><th>Stav</th><th>Akce</th></tr></thead><tbody id="det-tbody"></tbody></table></div></div>
             </div>
@@ -182,6 +187,34 @@
         } catch(e) { document.getElementById('login-msg').innerText = "Chyba serveru."; }
     }
 
+    // NOVÁ FUNKCE PRO OBNOVU HESLA
+    async function forgotPassword() {
+        const email = prompt("Zadejte svůj e-mail pro obnovu hesla:");
+        if (!email) return;
+
+        const msgEl = document.getElementById('login-msg');
+        msgEl.style.color = "var(--accent)";
+        msgEl.innerText = "Odesílám žádost o heslo...";
+
+        try {
+            const res = await fetch(SCRIPT_URL, { 
+                method: "POST", 
+                body: JSON.stringify({ action: "forgotPassword", email: email }) 
+            }).then(r => r.json());
+
+            if (res.status === "success") {
+                alert("Heslo bylo odesláno na váš e-mail.");
+                msgEl.innerText = "";
+            } else {
+                msgEl.style.color = "red";
+                msgEl.innerText = res.msg || "E-mail nebyl nalezen.";
+            }
+        } catch (e) {
+            msgEl.style.color = "red";
+            msgEl.innerText = "Chyba při komunikaci se serverem.";
+        }
+    }
+
     function applyPermissions() {
         const adminsOnly = document.querySelectorAll('.admin-only');
         adminsOnly.forEach(el => {
@@ -223,7 +256,7 @@
                     <td><span class="badge-period">${t.perioda} měs.</span></td>
                     <td>
                         <span class="${diff <= 14 ? 'status-red' : ''}">${next.toLocaleDateString('cs-CZ')}</span>
-                        ${isPlanned ? `<br><span class="badge-plan">📅 VÝJEZD: ${pDate}</span>` : ''}
+                        ${isPlanned ? `<br><span class="badge-plan">📅 Termín: ${pDate}</span>` : ''}
                     </td>
                     <td class="admin-only ${USER_ROLE !== 'admin' ? 'hidden' : ''}">
                         <button class="btn ${isPlanned ? 'btn-primary' : 'btn-accent'} btn-icon" onclick="openPlan('${t.Firma}', '${t.typ}', '${t.planned||''}', '${t.admin||''}')">
@@ -260,7 +293,7 @@
         if(USER_ROLE === 'admin') {
             document.getElementById('ev-addr-row').classList.remove('hidden');
             document.getElementById('ev-address').innerText = klient.Adresa || "Nezadána";
-            document.getElementById('ev-map-link').innerHTML = klient.Adresa ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(klient.Adresa)}" target="_blank" class="btn btn-accent" style="width:100%; text-decoration:none;">Navigovat do firmy 🗺️</a>` : "";
+            document.getElementById('ev-map-link').innerHTML = klient.Adresa ? `<a href="http://maps.google.com/?q=${encodeURIComponent(klient.Adresa)}" target="_blank" class="btn btn-accent" style="width:100%; text-decoration:none;">Navigovat do firmy 🗺️</a>` : "";
         } else {
             document.getElementById('ev-addr-row').classList.add('hidden');
             document.getElementById('ev-map-link').innerHTML = "";
@@ -292,7 +325,7 @@
     function openDetail(co) {
         if(USER_ROLE !== 'admin') return;
         CURR_CO = co; const c = CLIENTS.find(x => x.Firma === co);
-        document.getElementById('det-name').innerText = co; 
+        document.getElementById('dash-name').innerText = co; 
         document.getElementById('det-email').innerText = c.email; 
         document.getElementById('det-address').innerText = c.Adresa || "";
         
@@ -337,8 +370,8 @@
     async function savePlan() { await api({ action: "planTask", companyName: CURR_CO, taskType: CURR_TASK, plannedDate: document.getElementById('p-date').value, adminName: document.getElementById('p-admin').value }); closeModal('modal-plan'); }
     async function saveClient() { await api({ action: "addClient", name: document.getElementById('f-name').value, email: document.getElementById('f-email').value, address: document.getElementById('f-address').value }); closeModal('modal-client'); }
     async function saveTask() { await api({ action: document.getElementById('t-old-type').value ? "editTask" : "addTask", companyName: CURR_CO, oldType: document.getElementById('t-old-type').value, type: document.getElementById('t-type').value, lastDate: document.getElementById('t-date').value, period: document.getElementById('t-period').value }); closeModal('modal-task'); }
-    async function deleteTask(type) { if(confirm("Opravdu smazat tento úkon a jeho historii?")) await api({ action: "deleteTask", companyName: CURR_CO, taskType: type }); }
-    async function deleteClient(id) { if(confirm("Smazat klienta? Tím smažete i všechny jeho úkoly!")) await api({ action: "deleteClient", id }); }
+    async function deleteTask(type) { if(confirm("Opravdu smazat tento úkon?")) await api({ action: "deleteTask", companyName: CURR_CO, taskType: type }); }
+    async function deleteClient(id) { if(confirm("Smazat klienta?")) await api({ action: "deleteClient", id }); }
     
     function editTaskPop(typ, date, per) { 
         document.getElementById('task-modal-title').innerText = "Upravit úkon"; 
