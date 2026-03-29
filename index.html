@@ -39,9 +39,7 @@
         .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal { background: white; padding: 2rem; border-radius: 20px; width: 90%; max-width: 500px; }
 
-        /* Kalendář eventy */
-        .fc-event { border: none !important; padding: 3px 6px; font-size: 0.8rem; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .fc-event-title { font-weight: 700; }
+        .fc-event { border: none !important; padding: 3px 6px; font-size: 0.8rem; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -49,10 +47,11 @@
 <div id="login-screen">
     <div class="login-box">
         <div style="background: var(--accent); width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-weight: 800; color: var(--primary);">OT</div>
-        <h2 style="font-weight: 800; margin-bottom: 2rem;">BOZP Portál</h2>
+        <h2 style="font-weight: 800; margin-bottom: 1rem;">BOZP Portál</h2>
         <input type="email" id="login-email" placeholder="E-mail">
         <input type="password" id="login-password" placeholder="Heslo">
         <button class="btn btn-primary" onclick="doLogin()">Přihlásit se</button>
+        <button class="btn" style="background:none; color: var(--text-light); font-size: 0.8rem; margin-top: 15px;" onclick="handleForgotPassword()">Zapomenuté heslo?</button>
         <p id="login-msg" style="color: red; margin-top: 15px; font-size: 0.8rem;"></p>
     </div>
 </div>
@@ -70,18 +69,11 @@
         </aside>
         <main class="content">
             <div id="page-dashboard">
-                <h1>Blízké termíny</h1><br>
+                <h1>Blízké termíny (To-Do)</h1><br>
                 <div class="card"><table><thead><tr><th>Firma</th><th>Úkon</th><th>Expirace</th><th>Zbývá</th><th>Akce</th></tr></thead><tbody id="dash-tbody"></tbody></table></div>
             </div>
             <div id="page-terminy" class="hidden">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h1>Harmonogram prací</h1>
-                    <div style="font-size: 0.8rem; display:flex; gap:15px;">
-                        <span><b style="color:#2563eb">●</b> Ondřej</span>
-                        <span><b style="color:#059669">●</b> Technik</span>
-                        <span><b style="color:#d97706">●</b> Externista</span>
-                    </div>
-                </div>
+                <h1>Harmonogram prací</h1><br>
                 <div id="calendar" style="background:white; padding:20px; border-radius:var(--radius); border:1px solid var(--border);"></div>
             </div>
             <div id="page-klienti" class="hidden">
@@ -106,14 +98,10 @@
     <p id="plan-info" style="margin-bottom:15px; font-weight:700; color:var(--primary);"></p>
     <label style="font-size:0.75rem">Datum schůzky:</label>
     <input type="date" id="p-date">
-    <label style="font-size:0.75rem">Kdo tam pojede (Admin):</label>
-    <select id="p-admin">
-        <option value="Ondřej">Ondřej</option>
-        <option value="Technik">Technik</option>
-        <option value="Externista">Externista</option>
-    </select>
+    <label style="font-size:0.75rem">Kdo tam pojede:</label>
+    <select id="p-admin"></select>
     <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="savePlan()">Uložit do kalendáře</button>
-    <button class="btn" onclick="closeModal('modal-plan')" style="margin-top:10px; width:100%">Zavřít</button>
+    <button class="btn" onclick="closeModal('modal-plan')" style="margin-top:10px; width:100%">Zrušit</button>
 </div></div>
 
 <div class="modal-backdrop" id="modal-client"><div class="modal"><h2>Nový klient</h2><br><input type="text" id="f-name" placeholder="Název firmy"><input type="email" id="f-email" placeholder="Email"><button class="btn btn-primary" onclick="saveClient()">Uložit</button><button class="btn" onclick="closeModal('modal-client')" style="margin-top:10px;">Zavřít</button></div></div>
@@ -123,12 +111,8 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdzr3oNh4w6kbKVtLNSgThYYB35Uk6Ycf76lpddjVxGsSDiqdmV7__Md-Tf3E1Qx4O/exec"; 
     let CLIENTS = [], TASKS = [], CURR_CO = "", CURR_TASK = "", CALENDAR;
 
-    // Barvy pro adminy
-    const ADMIN_COLORS = {
-        "Ondřej": "#2563eb",   // Modrá
-        "Technik": "#059669",  // Zelená
-        "Externista": "#d97706" // Oranžová
-    };
+    // Barvy pro různé adminy
+    const COLORS = ["#2563eb", "#059669", "#d97706", "#7c3aed", "#db2777", "#ea580c"];
 
     async function api(payload) {
         const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
@@ -147,7 +131,28 @@
             document.getElementById('app').style.display = 'flex';
             initCalendar();
             render();
+            populateAdmins();
         } else { document.getElementById('login-msg').innerText = res.msg; }
+    }
+
+    async function handleForgotPassword() {
+        const email = document.getElementById('login-email').value;
+        if(!email) { alert("Zadejte email do pole výše."); return; }
+        const res = await api({ action: "forgotPassword", email });
+        if(res.status === "code_sent") {
+            const code = prompt("Kód z e-mailu:");
+            const newPass = prompt("Nové heslo:");
+            if(code && newPass) {
+                const res2 = await api({ action: "resetPassword", email, code, newPassword: newPass });
+                alert(res2.status === "success" ? "Změněno!" : res2.msg);
+            }
+        } else { alert(res.msg); }
+    }
+
+    function populateAdmins() {
+        const adminSelect = document.getElementById('p-admin');
+        const admins = CLIENTS.filter(c => c.Obor.toLowerCase() === 'admin');
+        adminSelect.innerHTML = admins.map(a => `<option value="${a.Firma}">${a.Firma}</option>`).join('');
     }
 
     function initCalendar() {
@@ -155,8 +160,7 @@
             initialView: 'dayGridMonth',
             locale: 'cs',
             firstDay: 1,
-            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
-            eventOrder: "title" // Pomůže seřadit eventy pod sebou
+            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' }
         });
         CALENDAR.render();
     }
@@ -165,31 +169,28 @@
         const dBody = document.getElementById('dash-tbody');
         dBody.innerHTML = "";
         const calEvents = [];
+        const adminMap = {}; 
+        const admins = CLIENTS.filter(c => c.Obor.toLowerCase() === 'admin');
+        admins.forEach((a, i) => adminMap[a.Firma] = COLORS[i % COLORS.length]);
 
         TASKS.forEach(t => {
             const next = addMonths(t.posledni, t.perioda);
             const diff = daysDiff(next);
             
-            // Pokud je úkon NAPLÁNOVÁN
             if (t.planned && t.admin) {
                 calEvents.push({
                     title: `[${t.admin}] ${t.Firma}`,
                     start: t.planned.split('T')[0],
-                    backgroundColor: ADMIN_COLORS[t.admin] || '#64748b',
-                    extendedProps: { task: t.typ }
+                    backgroundColor: adminMap[t.admin] || '#64748b'
                 });
             }
 
-            // Dashboard
             if (diff <= 30) {
                 dBody.innerHTML += `<tr><td>${t.Firma}</td><td>${t.typ}</td><td>${next.toLocaleDateString('cs-CZ')}</td><td>${diff} dní</td><td><button class="btn btn-accent" onclick="openPlan('${t.Firma}', '${t.typ}')">Naplánovat</button></td></tr>`;
             }
         });
 
-        if(CALENDAR) {
-            CALENDAR.removeAllEvents();
-            CALENDAR.addEventSource(calEvents);
-        }
+        if(CALENDAR) { CALENDAR.removeAllEvents(); CALENDAR.addEventSource(calEvents); }
 
         document.getElementById('klienti-tbody').innerHTML = CLIENTS
             .filter(c => c.Obor.toLowerCase() !== 'admin')
@@ -211,21 +212,22 @@
         refreshAfterSave();
     }
 
-    // Ostatní pomocné funkce (showPage, refreshAfterSave, atd.) jsou stejné...
+    async function refreshAfterSave() {
+        const res = await api({ action: "login", email: document.getElementById('login-email').value, password: document.getElementById('login-password').value });
+        CLIENTS = res.clients; TASKS = res.tasks; render();
+    }
+
     function showPage(id) { 
         ['dashboard','klienti','terminy','detail'].forEach(p => document.getElementById('page-'+p).classList.add('hidden')); 
         document.getElementById('page-'+id).classList.remove('hidden'); 
         document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); 
         if(id === 'terminy') setTimeout(() => CALENDAR.render(), 100); 
     }
-    async function refreshAfterSave() {
-        const res = await api({ action: "login", email: document.getElementById('login-email').value, password: document.getElementById('login-password').value });
-        CLIENTS = res.clients; TASKS = res.tasks; render();
-    }
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function addMonths(d, m) { let r = new Date(d); r.setMonth(r.getMonth() + parseInt(m)); return r; }
     function daysDiff(d) { const today = new Date(); today.setHours(0,0,0,0); const target = new Date(d); target.setHours(0,0,0,0); return Math.ceil((target - today) / (1000 * 60 * 60 * 24)); }
+    
     function openDetail(co) {
         CURR_CO = co; const c = CLIENTS.find(x => x.Firma === co);
         document.getElementById('det-name').innerText = co;
