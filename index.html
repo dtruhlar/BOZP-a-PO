@@ -145,34 +145,32 @@
     // --- LOGIKA NAČÍTÁNÍ ---
     async function loadData() {
     try {
-        // Změna: přidán redirect: 'follow' a cache: 'no-cache'
+        console.log("Navazuji spojení s Google Scriptem...");
+        
+        // Použijeme fetch s parametry pro Google Apps Script
         const response = await fetch(SCRIPT_URL, {
             method: 'GET',
-            redirect: 'follow', // EXTRÉMNĚ DŮLEŽITÉ PRO GOOGLE
-            cache: 'no-cache'
+            mode: 'cors', // Explicitně povolíme CORS
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
+            redirect: 'follow' // Google nás bude přesměrovávat na úložiště dat
         });
 
-        if (!response.ok) {
-            throw new Error(`Server odpověděl kódem ${response.status}`);
-        }
+        if (!response.ok) throw new Error('Síťová chyba');
 
         const data = await response.json();
-        
-        // Pokud skript vrátil chybu v JSONu (např. chybějící listy)
-        if (data.error) {
-            alert("Chyba Google Tabulky: " + data.error);
-            return;
-        }
+        console.log("Data přijata:", data);
 
         CLIENTS = data.clients || [];
         TASKS = data.tasks || [];
         
         renderAll();
-        console.log("Data úspěšně načtena", data);
 
     } catch (err) {
-        console.error("Detailní chyba fetch:", err);
-        alert("Nepodařilo se načíst data z Google Scriptu. Zkontroluj konzoli (F12).");
+        console.error("Detailní chyba:", err);
+        // Pokud to stále hází CORS, zkusíme záložní metodu
+        alert("Chyba načítání. Zkuste v Google Scriptu provést 'Nové nasazení' a nastavit 'Who has access' na 'Anyone'.");
     }
 }
 
