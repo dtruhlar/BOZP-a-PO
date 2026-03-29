@@ -241,17 +241,26 @@
     if (!confirm("Opravdu chcete smazat tuto firmu i všechny její termíny?")) return;
     
     try {
+        // Odeslání požadavku na smazání
         const response = await fetch(SCRIPT_URL, {
             method: "POST",
             body: JSON.stringify({ action: "deleteClient", id: id })
         });
         
-        // Počkáme na potvrzení od skriptu
-        alert("Firma byla úspěšně smazána.");
-        location.reload(); 
+        // MÍSTO REFRESHE STRÁNKY JEN AKTUALIZUJEME DATA V PAMĚTI
+        // Odstraníme klienta ze seznamu
+        CLIENTS = CLIENTS.filter(c => c.clientId != id);
+        // Odstraníme jeho termíny
+        TASKS = TASKS.filter(t => t.clientId != id && t.ID != id);
+        
+        // Překreslíme tabulky na stránce bez odhlášení
+        renderAll();
+        
+        alert("Firma byla smazána.");
     } catch (e) {
-        alert("Chyba při mazání: " + e.message);
+        alert("Chyba při komunikaci: " + e.message);
     }
+}
 }
 </script>
 </body>
