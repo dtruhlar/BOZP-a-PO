@@ -6,12 +6,11 @@
     <title>Ing. Ondřej Toman — Správa BOZP & PO</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* CSS STYLY (Zkráceno pro přehlednost, ponechány tvé původní vizuály) */
+        /* CSS STYLY */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root { --navy: #1a2744; --navy-light: #243460; --gold: #c9a44e; --gold-light: #e8c97a; --cream: #f7f4ef; --text: #1a1a1a; --text-muted: #5a5a6a; --danger: #c0392b; --warning: #e67e22; --success: #27ae60; --border: rgba(26,39,68,0.12); --radius: 10px; }
         body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
         
-        /* LOGIN & LAYOUT */
         #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); padding: 2rem; }
         .login-box { background: #fff; border-radius: 18px; padding: 3rem 2.5rem; width: 100%; max-width: 420px; box-shadow: 0 8px 48px rgba(0,0,0,0.25); text-align: center; }
         #app { display: none; }
@@ -21,7 +20,6 @@
         .sidebar { width: 220px; background: #fff; border-right: 1px solid var(--border); padding: 1.5rem 0; }
         .main { flex: 1; padding: 2rem; overflow-y: auto; }
 
-        /* KOMPONENTY */
         .nav-item { padding: 10px 15px; cursor: pointer; font-size: 14px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
         .nav-item.active { background: var(--navy); color: #fff; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 2rem; }
@@ -30,7 +28,6 @@
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
         
-        /* MODAL */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal-overlay.open { display: flex; }
         .modal { background: #fff; padding: 2rem; border-radius: 15px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
@@ -137,6 +134,7 @@
 </div>
 
 <script>
+    // URL tvé webové aplikace z Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdzr3oNh4w6kbKVtLNSgThYYB35Uk6Ycf76lpddjVxGsSDiqdmV7__Md-Tf3E1Qx4O/exec";
     
     let CLIENTS = [];
@@ -144,38 +142,38 @@
 
     // --- LOGIKA NAČÍTÁNÍ ---
     async function loadData() {
-    try {
-        console.log("Navazuji spojení s Google Scriptem...");
-        
-        // Použijeme fetch s parametry pro Google Apps Script
-        const response = await fetch(SCRIPT_URL, {
-            method: 'GET',
-            mode: 'cors', // Explicitně povolíme CORS
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8',
-            },
-            redirect: 'follow' // Google nás bude přesměrovávat na úložiště dat
-        });
+        try {
+            console.log("Navazuji spojení s Google Scriptem...");
+            const response = await fetch(SCRIPT_URL, {
+                method: 'GET',
+                redirect: 'follow'
+            });
 
-        if (!response.ok) throw new Error('Síťová chyba');
+            if (!response.ok) throw new Error('Síťová chyba');
 
-        const data = await response.json();
-        console.log("Data přijata:", data);
+            const data = await response.json();
+            console.log("Data přijata:", data);
 
-        CLIENTS = data.clients || [];
-        TASKS = data.tasks || [];
-        
-        renderAll();
+            CLIENTS = data.clients || [];
+            TASKS = data.tasks || [];
+            
+            renderAll();
 
-    } catch (err) {
-        console.error("Detailní chyba:", err);
-        // Pokud to stále hází CORS, zkusíme záložní metodu
-        alert("Chyba načítání. Zkuste v Google Scriptu provést 'Nové nasazení' a nastavit 'Who has access' na 'Anyone'.");
+        } catch (err) {
+            console.error("Detailní chyba:", err);
+            alert("Chyba načítání dat. Ujistěte se, že je skript nasazen pro 'Anyone'.");
+        }
     }
-}
 
-    // --- POMOCNÉ FUNKCE ---
+    // --- RENDEROVACÍ FUNKCE ---
+    function renderAll() {
+        renderDashboard();
+        renderKlienti();
+        renderTerminy();
+    }
+
     function addMonths(dateStr, months) {
+        if (!dateStr) return new Date();
         const d = new Date(dateStr);
         d.setMonth(d.getMonth() + parseInt(months));
         return d;
@@ -187,11 +185,9 @@
         return Math.round((targetDate - today) / (1000 * 60 * 60 * 24));
     }
 
-    // --- RENDEROVÁNÍ STRÁNEK ---
     function renderDashboard() {
         const tbody = document.getElementById('dashboard-tbody');
         tbody.innerHTML = "";
-        
         let expiredCount = 0;
 
         TASKS.forEach(t => {
@@ -201,7 +197,7 @@
                 if (days < 0) expiredCount++;
                 tbody.innerHTML += `
                     <tr>
-                        <td>${t.odpovedny}</td>
+                        <td>${t.odpovedny || 'Neznámý'}</td>
                         <td>${t.typ}</td>
                         <td>${nextDate.toLocaleDateString('cs-CZ')}</td>
                         <td><span class="badge ${days < 0 ? 'badge-danger' : 'badge-ok'}">${days < 0 ? 'PO TERMÍNU' : 'BLÍŽÍ SE'}</span></td>
@@ -211,14 +207,14 @@
 
         document.getElementById('stats-grid').innerHTML = `
             <div class="stat-card"><h3>${CLIENTS.length}</h3><p>Klientů celkem</p></div>
-            <div class="stat-card" style="color:red"><h3>${expiredCount}</h3><p>Expirovaných úkonů</p></div>
+            <div class="stat-card" style="color:${expiredCount > 0 ? 'red' : 'inherit'}"><h3>${expiredCount}</h3><p>Expirovaných úkonů</p></div>
         `;
     }
 
     function renderKlienti() {
         const tbody = document.getElementById('klienti-tbody');
         tbody.innerHTML = CLIENTS.map(c => `
-            <tr><td>${c.name}</td><td>${c.ico}</td><td>${c.obor}</td><td>${c.email}</td></tr>
+            <tr><td>${c.name}</td><td>${c.ico || '-'}</td><td>${c.obor || '-'}</td><td>${c.email}</td></tr>
         `).join('');
     }
 
@@ -226,12 +222,13 @@
         const tbody = document.getElementById('all-terminy-tbody');
         tbody.innerHTML = TASKS.map(t => {
             const next = addMonths(t.posledni, t.perioda);
+            const days = daysDiff(next);
             return `<tr>
-                <td>${t.odpovedny}</td>
+                <td>${t.odpovedny || 'Neznámý'}</td>
                 <td>${t.typ}</td>
-                <td>${new Date(t.posledni).toLocaleDateString('cs-CZ')}</td>
+                <td>${t.posledni ? new Date(t.posledni).toLocaleDateString('cs-CZ') : '-'}</td>
                 <td>${next.toLocaleDateString('cs-CZ')}</td>
-                <td>${daysDiff(next)} dní</td>
+                <td>${days} dní</td>
             </tr>`;
         }).join('');
     }
@@ -244,8 +241,13 @@
     }
 
     function showPage(pageId) {
-        ['dashboard', 'klienti', 'terminy'].forEach(p => document.getElementById('page-' + p).classList.add('hidden'));
+        ['dashboard', 'klienti', 'terminy'].forEach(p => {
+            document.getElementById('page-' + p).classList.add('hidden');
+        });
         document.getElementById('page-' + pageId).classList.remove('hidden');
+        
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        event.currentTarget.classList.add('active');
     }
 
     function openModal() { document.getElementById('add-modal').classList.add('open'); }
@@ -257,9 +259,7 @@
         btn.disabled = true;
         btn.innerText = "Ukládám...";
 
-        const clientId = "c-" + Date.now();
         const clientName = document.getElementById('f-name').value;
-
         const newTasks = [];
         document.querySelectorAll('.task-init').forEach(input => {
             if (input.value) {
@@ -274,27 +274,23 @@
 
         const payload = {
             action: "addClient",
-            id: clientId,
+            id: "c-" + Date.now(),
             name: clientName,
             ico: document.getElementById('f-ico').value,
-            obor: "BOZP",
+            obor: "BOZP & PO",
             email: document.getElementById('f-email').value,
             tasks: newTasks
         };
 
         try {
-            // Použití no-cors by nefungovalo pro získání odpovědi, 
-            // ale Apps Script vyžaduje specifické zacházení s POST
             await fetch(SCRIPT_URL, {
                 method: "POST",
-                mode: "no-cors", // Nutné pro Google Script POST z jiného webu
-                headers: { "Content-Type": "application/json" },
+                mode: "no-cors",
                 body: JSON.stringify(payload)
             });
-
-            alert("Data odeslána! Tabulka se aktualizuje za moment.");
+            alert("Data odeslána do tabulky!");
             closeModal();
-            location.reload(); 
+            setTimeout(() => location.reload(), 500);
         } catch (err) {
             alert("Chyba při ukládání.");
             btn.disabled = false;
