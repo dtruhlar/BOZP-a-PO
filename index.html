@@ -47,6 +47,7 @@
         <div class="field-group"><label>E-mail</label><input type="email" id="login-email" placeholder="vas@email.cz"></div>
         <div class="field-group"><label>Heslo</label><input type="password" id="login-password" placeholder="Heslo"></div>
         <button class="btn btn-navy" style="width:100%" id="login-btn" onclick="doLogin()">Vstoupit do systému</button>
+        <p style="margin-top:15px; font-size:13px;"><a href="#" onclick="handleForgotPassword()" style="color:var(--navy); text-decoration:none;">Zapomněli jste heslo?</a></p>
         <p id="login-msg" style="color:red; font-size:12px; margin-top:10px;"></p>
     </div>
 </div>
@@ -58,7 +59,7 @@
     </div>
     <div class="app-layout">
         <nav class="sidebar">
-            <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">📊 Dashboard</div>
+            <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">📊 Přehled</div>
             <div class="nav-item" id="nav-klienti" onclick="showPage('klienti')">🏢 Klienti</div>
             <div class="nav-item" id="nav-terminy" onclick="showPage('terminy')">📅 Všechny termíny</div>
         </nav>
@@ -81,7 +82,7 @@
                 </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>ID</th><th>Firma</th><th>IČO</th><th>E-mail</th><th class="admin-only">Akce</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Firma</th><th>IČO</th><th>E-mail</th><th class="admin-only" id="admin-th">Akce</th></tr></thead>
                         <tbody id="klienti-tbody"></tbody>
                     </table>
                 </div>
@@ -128,6 +129,7 @@
         const email = document.getElementById('login-email').value;
         const pass = document.getElementById('login-password').value;
         const msg = document.getElementById('login-msg');
+        if(!email) { alert("Zadejte email"); return; }
         
         msg.innerText = "Ověřování...";
 
@@ -140,14 +142,13 @@
             if (res.status === "needs_reg") {
                 const newPass = prompt("První přihlášení. Zvolte si své heslo:");
                 if (newPass) {
-                    await fetch(SCRIPT_URL, {
+                    const regRes = await fetch(SCRIPT_URL, {
                         method: "POST",
                         body: JSON.stringify({ action: "login", email: email, newPassword: newPass })
-                    });
-                    alert("Heslo nastaveno. Nyní se znovu přihlaste.");
+                    }).then(r => r.json());
+                    if(regRes.status === "success_reg") alert("Heslo nastaveno. Přihlaste se.");
                 }
-                location.reload();
-                return;
+                location.reload(); return;
             }
 
             if (res.status === "success") {
@@ -158,41 +159,43 @@
                 if (USER_ROLE === "client") {
                     document.getElementById('add-client-btn').style.display = "none";
                     document.getElementById('nav-klienti').style.display = "none";
-                    document.getElementById('user-display').innerText = "Klientský portál — " + CLIENTS[0].name;
+                    document.getElementById('admin-th').style.display = "none";
+                    document.getElementById('user-display').innerText = "Klientský portál — " + (CLIENTS[0]?.name || "");
                 }
 
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app').style.display = 'block';
                 renderAll();
-            } else {
-                msg.innerText = res.msg;
-            }
-        } catch (e) { msg.innerText = "Chyba spojení se skriptem."; }
+            } else { msg.innerText = res.msg; }
+        } catch (e) { msg.innerText = "Chyba spojení."; }
     }
 
-    function renderAll() {
-        renderDashboard();
-        renderKlienti();
-        renderTerminy();
+    async function handleForgotPassword() {
+        const email = document.getElementById('login-email').value;
+        if (!email) { alert("Zadejte email."); return; }
+        if (!confirm("Odeslat kód na " + email + "?")) return;
+        try {
+            const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "forgotPassword", email: email }) }).then(r => r.json());
+            if (res.status === "code_sent") {
+                const code = prompt("Zadejte kód z e-mailu:");
+                if (code) {
+                    const newPass = prompt("Nové heslo:");
+                    if (newPass) {
+                        const r = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "resetPassword", email: email, code: code, newPassword: newPass }) }).then(r => r.json());
+                        if (r.status === "success") { alert("Změněno!"); location.reload(); } else alert(r.msg);
+                    }
+                }
+            } else alert(res.msg);
+        } catch(e) { alert("Chyba."); }
     }
 
-    function addMonths(dateStr, months) {
-        if (!dateStr) return new Date();
-        const d = new Date(dateStr);
-        d.setMonth(d.getMonth() + parseInt(months));
-        return d;
-    }
-
-    function daysDiff(target) {
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        return Math.round((target - today) / (1000*60*60*24));
-    }
+    function renderAll() { renderDashboard(); renderKlienti(); renderTerminy(); }
+    function addMonths(d, m) { const res = new Date(d); res.setMonth(res.getMonth() + parseInt(m)); return res; }
+    function daysDiff(t) { const today = new Date(); today.setHours(0,0,0,0); return Math.round((t - today) / 86400000); }
 
     function renderDashboard() {
         const tbody = document.getElementById('dashboard-tbody');
-        tbody.innerHTML = "";
-        let expired = 0;
+        tbody.innerHTML = ""; let expired = 0;
         TASKS.forEach(t => {
             const next = addMonths(t.posledni, t.perioda);
             const diff = daysDiff(next);
@@ -205,15 +208,7 @@
     }
 
     function renderKlienti() {
-        document.getElementById('klienti-tbody').innerHTML = CLIENTS.map(c => `
-            <tr>
-                <td>${c.clientId}</td>
-                <td><strong>${c.name}</strong></td>
-                <td>${c.ico || '-'}</td>
-                <td>${c.email}</td>
-                <td class="${USER_ROLE === 'admin' ? '' : 'hidden'}"><button class="btn btn-danger" onclick="deleteClient(${c.clientId})">Smazat</button></td>
-            </tr>
-        `).join('');
+        document.getElementById('klienti-tbody').innerHTML = CLIENTS.map(c => `<tr><td>${c.clientId}</td><td><strong>${c.name}</strong></td><td>${c.ico || '-'}</td><td>${c.email}</td>${USER_ROLE === 'admin' ? `<td><button class="btn btn-danger" onclick="deleteClient(${c.clientId})">Smazat</button></td>` : ''}</tr>`).join('');
     }
 
     function renderTerminy() {
@@ -234,26 +229,16 @@
     function closeModal() { document.getElementById('add-modal').classList.remove('open'); }
 
     async function saveNewClient(e) {
-        e.preventDefault();
-        const btn = document.getElementById('save-btn');
+        e.preventDefault(); const btn = document.getElementById('save-btn');
         btn.disabled = true; btn.innerText = "Ukládám...";
-        const payload = {
-            action: "addClient",
-            name: document.getElementById('f-name').value,
-            ico: document.getElementById('f-ico').value,
-            email: document.getElementById('f-email').value,
-            tasks: []
-        };
-        document.querySelectorAll('.task-init').forEach(i => {
-            if (i.value) payload.tasks.push({ typ: i.dataset.name, posledni: i.value, perioda: i.dataset.period });
-        });
+        const payload = { action: "addClient", name: document.getElementById('f-name').value, ico: document.getElementById('f-ico').value, email: document.getElementById('f-email').value, tasks: [] };
+        document.querySelectorAll('.task-init').forEach(i => { if (i.value) payload.tasks.push({ typ: i.dataset.name, posledni: i.value, perioda: i.dataset.period }); });
         await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-        alert("Firma přidána!");
-        location.reload();
+        alert("Hotovo!"); location.reload();
     }
 
     async function deleteClient(id) {
-        if (!confirm("Smazat firmu i termíny?")) return;
+        if (!confirm("Smazat?")) return;
         await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "deleteClient", id: id }) });
         location.reload();
     }
