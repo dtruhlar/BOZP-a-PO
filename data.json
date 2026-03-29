@@ -1,0 +1,8 @@
+{
+  "clients": [
+    { "id": "abc-stavby", "name": "ABC Stavby s.r.o.", "email": "info@abc.cz", "ico": "123456" }
+  ],
+  "tasks": [
+    { "clientId": "abc-stavby", "typ": "Školení BOZP", "posledni": "2024-01-01", "perioda": 12 }
+  ]
+}
